@@ -11,16 +11,21 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.18",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^4.1.18",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@huddle/eslint-config": "workspace:*",
     "@huddle/typescript-config": "workspace:*",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^3.1.0",
     "eslint": "^8.57.0",
+    "tailwind-scrollbar": "^4.0.2",
     "typescript": "5.5.4",
     "vite": "^5.1.4"
   }

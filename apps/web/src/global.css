@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@plugin 'tailwind-scrollbar';
+@plugin 'tailwindcss-animate';
+
+@config '../tailwind.config.cjs';
+
+@utility container {
+  @apply mx-auto max-w-207.5! px-4;
+}
+
+@utility container-lg {
+  @apply mx-auto max-w-242! px-4;
+}
+
+@utility badge {
+  @apply rounded-xs bg-gray-400 px-1.5 py-0.5 text-xs font-medium text-white uppercase;
+}
+
+@utility no-scrollbar {
+  /* Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+@utility collapse-if-empty {
+  &:empty {
+    display: none;
+  }
+}
+
+svg {
+  user-select: none;
+}
+
+blockquote p:before {
+  display: none;
+}
+
+blockquote p {
+  font-style: normal;
+}
+
+.prose ul li > code,
+.prose ol li > code,
+p code,
+a > code,
+strong > code,
+em > code,
+h1 > code,
+h2 > code,
+h3 > code {
+  background: #e4e4e4 !important;
+  color: currentColor !important;
+  font-size: 14px;
+  font-weight: normal !important;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.prose ul li > code:before,
+p > code:before,
+.prose ul li > code:after,
+.prose ol li > code:before,
+p > code:before,
+.prose ol li > code:after,
+p > code:after,
+a > code:after,
+a > code:before {
+  content: "" !important;
+}
+
+/* Hide scrollbars */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

@@ -2,6 +2,13 @@
   "extends": "@huddle/typescript-config/vite.json",
   "include": ["src"],
   "compilerOptions": {
-    "jsx": "react-jsx"
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   }
 }

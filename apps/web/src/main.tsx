@@ -1,9 +1,9 @@
 import { createRoot } from "react-dom/client";
-import "./style.css";
+import "./global.css";
 
 const App = () => (
-  <div>
-    <h1>Welcome to Huddle!</h1>
+  <div className="container bg-slate-200">
+    <h1 className="">Welcome to Huddle!</h1>
   </div>
 );
 
