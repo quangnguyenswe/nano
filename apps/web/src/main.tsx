@@ -1,14 +1,44 @@
-import { createRoot } from "react-dom/client";
 import "./global.css";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { StrictMode } from "react";
+import ReactDOM from "react-dom/client";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
 
-const App = () => (
-  <div className="h-full bg-slate-200">
-    <h1 className="container">Welcome to Huddle!</h1>
-    <Input />
-    <Button>Click Me</Button>
-  </div>
-);
+// Import the generated route tree
+import { routeTree } from "./routeTree.gen";
+import { queryClient } from "./lib/query-client";
+import { QueryClientProvider } from "@tanstack/react-query";
 
-createRoot(document.getElementById("app")!).render(<App />);
+// Create a new router instance
+const router = createRouter({
+  routeTree,
+  defaultPreload: "intent",
+  defaultPreloadStaleTime: 0,
+  context: {
+    queryClient,
+  },
+});
+
+// Register the router instance for type safety
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
+
+function App() {
+  // const { user } = useAuth();
+
+  return <RouterProvider router={router} />;
+}
+
+const rootElement = document.getElementById("root") as HTMLElement;
+if (!rootElement.innerHTML) {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    </StrictMode>,
+  );
+}

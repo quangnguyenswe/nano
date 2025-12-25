@@ -1,6 +1,6 @@
 {
   "extends": "@huddle/typescript-config/vite.json",
-  "include": ["src"],
+  "include": ["src/**/*"],
   "compilerOptions": {
     "module": "ESNext",
     "moduleResolution": "node",
