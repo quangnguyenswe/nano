@@ -21,19 +21,19 @@ export default function Navigation() {
           <SiteLogo />
           <div className="flex-row items-center justify-end gap-2 flex-1 hidden md:flex">
             <Button
+              asChild
               size={"sm"}
               variant={"ghost"}
               className="text-sm text-gray-950 dark:text-white hover:bg-gray-200 hover:text-accent-foreground rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-950 dark:focus-visible:outline-white"
-              // to="/signup"
             >
-              Sign Up
+              <Link to="/signup">Sign Up</Link>
             </Button>
             <Button
+              asChild
               size={"sm"}
               className="rounded-md bg-teal-500 text-sm/6 font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-950 dark:bg-teal-500 dark:text-white dark:focus-visible:outline-white hover:bg-teal-600"
-              // to="/login"
             >
-              Log In
+              <Link to="/login">Log In</Link>
             </Button>
           </div>
           <div className="flex flex-1 justify-end md:hidden">
@@ -71,22 +71,20 @@ export default function Navigation() {
                 </>
               ) : ( */}
                   <>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                    >
-                      {/* <Link onClick={() => setIsOpen(false)} to="/login"> */}
-                      Sign up
-                      {/* </Link> */}
+                    <Button asChild size="sm" variant="outline">
+                      <Link onClick={() => setIsOpen(false)} to="/signup">
+                        Sign up
+                      </Link>
                     </Button>
                     <Button
+                      asChild
                       size="sm"
                       variant="secondary"
                       className="bg-teal-500 text-primary-foreground hover:bg-teal-500/70"
                     >
-                      {/* <Link onClick={() => setIsOpen(false)} to="/login"> */}
-                      Log in
-                      {/* </Link> */}
+                      <Link onClick={() => setIsOpen(false)} to="/login">
+                        Log in
+                      </Link>
                     </Button>
                   </>
                   {/* )} */}
