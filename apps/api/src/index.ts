@@ -4,7 +4,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { HTTPException } from "hono/http-exception";
 import apiRouter from "./routes";
-
+import "dotenv/config";
 const isProd = process.env.NODE_ENV === "production";
 const app = new Hono();
 const corsOrigins = process.env.CORS_ORIGINS?.split(",");
@@ -65,7 +65,7 @@ async function startServer() {
   serve(
     {
       fetch: app.fetch,
-      port: Number(process.env.PORT || 5000),
+      port: Number(process.env.PORT),
     },
     (info) => {
       console.log(`🚀 Server is running on http://localhost:${info.port}`);
