@@ -5,9 +5,15 @@ import { logger } from "hono/logger";
 import { HTTPException } from "hono/http-exception";
 import apiRouter from "./routes";
 import "dotenv/config";
+import { auth } from "./auth";
+import { Session, User } from "better-auth/types";
+import { Context } from "./shared/context";
+
 const isProd = process.env.NODE_ENV === "production";
-const app = new Hono();
 const corsOrigins = process.env.CORS_ORIGINS?.split(",");
+
+const app = new Hono<Context>();
+
 app.use(
   "*",
   cors({
@@ -31,6 +37,22 @@ app.use(logger());
 
 app.get("/ping", (c) => {
   return c.json({ message: "pong" });
+});
+
+app.on(["POST", "GET", "PUT", "DELETE"], "/auth/*", (c) => {
+  return auth.handler(c.req.raw);
+});
+
+app.use("*", async (c, next) => {
+  const session = await auth.api.getSession({ headers: c.req.raw.headers });
+
+  if (!session?.user) {
+    throw new HTTPException(401, { message: "Unauthorized" });
+  }
+
+  c.set("user", session.user);
+  c.set("session", session.session);
+  return next();
 });
 
 const routes = apiRouter(app);
