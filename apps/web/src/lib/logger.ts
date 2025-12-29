@@ -35,11 +35,11 @@ export enum LogLevel {
  * - Test: ERROR (only show errors in tests)
  */
 const getMinLogLevel = (): LogLevel => {
-  if (import.meta.env.PUBLIC_LOG_LEVEL) {
-    return import.meta.env.PUBLIC_LOG_LEVEL as LogLevel
+  if (import.meta.env.VITE_PUBLIC_LOG_LEVEL) {
+    return import.meta.env.VITE_PUBLIC_LOG_LEVEL as LogLevel
   }
 
-  const ENV = (import.meta.env.NODE_ENV || 'development') as string
+  const ENV = (import.meta.env.VITE_NODE_ENV || 'development') as string
   switch (ENV) {
     case 'development':
       return LogLevel.DEBUG
@@ -79,7 +79,7 @@ const LOG_CONFIG = {
 }
 
 // Get current environment
-const ENV = (import.meta.env.NODE_ENV || 'development') as keyof typeof LOG_CONFIG
+const ENV = (import.meta.env.VITE_NODE_ENV || 'development') as keyof typeof LOG_CONFIG
 const config = LOG_CONFIG[ENV] || LOG_CONFIG.development
 
 // Format objects for logging
