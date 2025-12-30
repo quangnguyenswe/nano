@@ -39,10 +39,6 @@ app.get("/ping", (c) => {
   return c.json({ message: "pong" });
 });
 
-app.on(["POST", "GET", "PUT", "DELETE"], "/auth/*", (c) => {
-  return auth.handler(c.req.raw);
-});
-
 app.use("*", async (c, next) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
 
