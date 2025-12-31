@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { MenuIcon } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import {
   Sheet,
   SheetContent,
@@ -8,33 +8,45 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "./ui/sheet";
+} from "../ui/sheet";
 import { useState } from "react";
-import SiteLogo from "./SiteLogo";
+import SiteLogo from "../SiteLogo";
+import useAuth from "@/hooks/use-auth";
+import AccountDropdown from "./AccountDropdown";
 //Talk. Connect. Decide.
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth();
   return (
     <header className="z-20 h-14 bg-sidebar sticky top-0 w-full">
       <div className="relative">
         <nav className="flex flex-1 justify-start items-center w-full px-4 h-14">
           <SiteLogo />
+
           <div className="flex-row items-center justify-end gap-2 flex-1 hidden md:flex">
-            <Button
-              asChild
-              size={"sm"}
-              variant={"ghost"}
-              className="text-sm text-gray-950 dark:text-white hover:bg-gray-200 hover:text-accent-foreground rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-950 dark:focus-visible:outline-white"
-            >
-              <Link to="/signup">Sign Up</Link>
-            </Button>
-            <Button
-              asChild
-              size={"sm"}
-              className="rounded-md bg-teal-500 text-sm/6 font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-950 dark:bg-teal-500 dark:text-white dark:focus-visible:outline-white hover:bg-teal-600"
-            >
-              <Link to="/login">Log In</Link>
-            </Button>
+            {user ? (
+              <>
+                <AccountDropdown user={user} />
+              </>
+            ) : (
+              <>
+                <Button
+                  asChild
+                  size={"sm"}
+                  variant={"ghost"}
+                  className="text-sm text-gray-950 dark:text-white hover:bg-gray-200 hover:text-accent-foreground rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-950 dark:focus-visible:outline-white"
+                >
+                  <Link to="/signup">Sign Up</Link>
+                </Button>
+                <Button
+                  asChild
+                  size={"sm"}
+                  className="rounded-md bg-teal-500 text-sm/6 font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-950 dark:bg-teal-500 dark:text-white dark:focus-visible:outline-white hover:bg-teal-600"
+                >
+                  <Link to="/login">Log In</Link>
+                </Button>
+              </>
+            )}
           </div>
           <div className="flex flex-1 justify-end md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
