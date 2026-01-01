@@ -1,0 +1,29 @@
+{
+  "name": "@huddle/email",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "email dev --port 3001 --dir src/templates",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@react-email/preview-server": "5.1.1",
+    "@types/node": "^20.19.27",
+    "@types/nodemailer": "^7.0.4",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
+    "react-email": "5.1.1"
+  },
+  "dependencies": {
+    "@react-email/components": "1.0.3",
+    "dotenv": "^17.2.3",
+    "nodemailer": "^7.0.12",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
