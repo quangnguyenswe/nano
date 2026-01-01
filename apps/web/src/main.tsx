@@ -8,6 +8,7 @@ import { routeTree } from "./routeTree.gen";
 import { queryClient } from "./lib/query-client";
 import { QueryClientProvider } from "@tanstack/react-query";
 import AuthProvider from "./providers/auth";
+import useAuth from "./hooks/use-auth";
 
 // Create a new router instance
 const router = createRouter({
@@ -15,6 +16,7 @@ const router = createRouter({
   defaultPreload: "intent",
   defaultPreloadStaleTime: 0,
   context: {
+    user: null,
     queryClient,
   },
 });
@@ -27,9 +29,9 @@ declare module "@tanstack/react-router" {
 }
 
 function App() {
-  // const { user } = useAuth();
+  const { user } = useAuth();
 
-  return <RouterProvider router={router} />;
+  return <RouterProvider router={router} context={{ user }} />;
 }
 
 const rootElement = document.getElementById("root") as HTMLElement;

@@ -1,7 +1,14 @@
 import { Toaster } from "@/components/ui/toaster";
 import TanStackQueryDevtools from "@/tanstack/query";
 import TanStackRouterDevtools from "@/tanstack/router";
-import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { type QueryClient } from "@tanstack/react-query";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
+import { User } from "better-auth/types";
+
+interface RouterContext {
+  queryClient: QueryClient;
+  user: User | null | undefined;
+}
 
 const RootLayout = () => (
   <>
@@ -14,4 +21,6 @@ const RootLayout = () => (
   </>
 );
 
-export const Route = createRootRoute({ component: RootLayout });
+export const Route = createRootRouteWithContext<RouterContext>()({
+  component: RootLayout,
+});
