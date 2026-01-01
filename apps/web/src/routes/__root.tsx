@@ -1,3 +1,4 @@
+import PageProgress from "@/components/PageProgress";
 import { Toaster } from "@/components/ui/toaster";
 import TanStackQueryDevtools from "@/tanstack/query";
 import TanStackRouterDevtools from "@/tanstack/router";
@@ -16,6 +17,7 @@ const RootLayout = () => (
       <Outlet />
     </div>
     <Toaster />
+    <PageProgress />
     <TanStackQueryDevtools />
     <TanStackRouterDevtools />
   </>

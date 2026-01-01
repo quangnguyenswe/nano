@@ -9,6 +9,7 @@ import { queryClient } from "./lib/query-client";
 import { QueryClientProvider } from "@tanstack/react-query";
 import AuthProvider from "./providers/auth";
 import useAuth from "./hooks/use-auth";
+import LoadingPage from "./components/LoadingPage";
 
 // Create a new router instance
 const router = createRouter({
@@ -19,6 +20,9 @@ const router = createRouter({
     user: null,
     queryClient,
   },
+  defaultPendingComponent: () => (
+    <LoadingPage initialMessage="Loading..." />
+  ),
 });
 
 // Register the router instance for type safety

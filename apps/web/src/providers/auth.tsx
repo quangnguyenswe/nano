@@ -1,6 +1,7 @@
 import { createContext, type PropsWithChildren } from "react";
 import { authClient } from "@/lib/auth-client";
 import { User } from "better-auth/types";
+import LoadingPage from "@/components/LoadingPage";
 
 const { useSession } = authClient;
 
@@ -16,7 +17,7 @@ function AuthProvider({ children }: PropsWithChildren) {
   const { data, isPending } = useSession();
 
   if (isPending) {
-    return <div>Loading...</div>;
+    return <LoadingPage initialMessage="Loading..." />;
   }
 
   return (

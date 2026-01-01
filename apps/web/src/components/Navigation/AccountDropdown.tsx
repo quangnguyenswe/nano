@@ -13,6 +13,7 @@ import { Button } from "../ui/button";
 import useSignOut from "@/hooks/use-signout";
 import { queryClient } from "@/lib/query-client";
 import { toast } from "sonner";
+import { usePageStore } from "@/store/page";
 
 type AccountDropdownProps = {
   user: User;
@@ -21,7 +22,7 @@ type AccountDropdownProps = {
 export default function AccountDropdown(props: AccountDropdownProps) {
   const { user } = props;
   const { mutateAsync: signOut, isPending } = useSignOut();
-
+  const { setPageProgressMessage } = usePageStore();
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -59,7 +60,7 @@ export default function AccountDropdown(props: AccountDropdownProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setPageProgressMessage("Loading profile")}>Profile</DropdownMenuItem>
           <DropdownMenuItem>Billing</DropdownMenuItem>
           <DropdownMenuItem>Settings</DropdownMenuItem>
         </DropdownMenuGroup>
