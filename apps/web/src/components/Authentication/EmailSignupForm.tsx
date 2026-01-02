@@ -2,11 +2,19 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "../ui/form";
 import { Input } from "../ui/input";
 import { Field, FieldDescription } from "../ui/field";
 import { Button } from "../ui/button";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 type EmailSignUpFormProps = {
   isDisabled: boolean;
@@ -22,6 +30,7 @@ const emailLoginFormSchema = z.object({
 export default function EmailSignupForm(props: EmailSignUpFormProps) {
   const { isDisabled, setIsDisabled } = props;
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { history } = useRouter();
 
   const form = useForm<z.infer<typeof emailLoginFormSchema>>({
     resolver: zodResolver(emailLoginFormSchema),
@@ -32,8 +41,32 @@ export default function EmailSignupForm(props: EmailSignUpFormProps) {
     },
   });
 
-  function onSubmit(values: z.infer<typeof emailLoginFormSchema>) {
-    console.log(values);
+  async function onSubmit(data: z.infer<typeof emailLoginFormSchema>) {
+    setIsLoading(true);
+    setIsDisabled(true);
+    try {
+      const result = await authClient.signUp.email({
+        email: data.email,
+        name: data.name,
+        password: data.password,
+        callbackURL: `${import.meta.env.VITE_CLIENT_URL}/`,
+      });
+
+      if (result.error) {
+        toast.error(result.error.message || "Failed to sign up");
+        return;
+      }
+
+      toast.success("Account created successfully");
+      setTimeout(() => {
+        history.push(`/verification?email=${encodeURIComponent(data.email)}`);
+      }, 500);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to sign up");
+    } finally {
+      setIsLoading(false);
+      setIsDisabled(false);
+    }
   }
   return (
     <Form {...form}>
@@ -101,7 +134,7 @@ export default function EmailSignupForm(props: EmailSignUpFormProps) {
             disabled={isDisabled || isLoading}
             className="cursor-pointer"
           >
-            Login
+            Continue
           </Button>
           <FieldDescription className="text-center">
             Already have an account? <Link to="/login">Login</Link>

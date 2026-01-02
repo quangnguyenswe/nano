@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticationRouteImport } from './routes/_authentication'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticationVerificationRouteImport } from './routes/_authentication/verification'
 import { Route as AuthenticationSignupRouteImport } from './routes/_authentication/signup'
 import { Route as AuthenticationLoginRouteImport } from './routes/_authentication/login'
 
@@ -23,6 +24,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticationVerificationRoute =
+  AuthenticationVerificationRouteImport.update({
+    id: '/verification',
+    path: '/verification',
+    getParentRoute: () => AuthenticationRoute,
+  } as any)
 const AuthenticationSignupRoute = AuthenticationSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -38,11 +45,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof AuthenticationLoginRoute
   '/signup': typeof AuthenticationSignupRoute
+  '/verification': typeof AuthenticationVerificationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof AuthenticationLoginRoute
   '/signup': typeof AuthenticationSignupRoute
+  '/verification': typeof AuthenticationVerificationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -50,18 +59,20 @@ export interface FileRoutesById {
   '/_authentication': typeof AuthenticationRouteWithChildren
   '/_authentication/login': typeof AuthenticationLoginRoute
   '/_authentication/signup': typeof AuthenticationSignupRoute
+  '/_authentication/verification': typeof AuthenticationVerificationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/signup'
+  fullPaths: '/' | '/login' | '/signup' | '/verification'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup'
+  to: '/' | '/login' | '/signup' | '/verification'
   id:
     | '__root__'
     | '/'
     | '/_authentication'
     | '/_authentication/login'
     | '/_authentication/signup'
+    | '/_authentication/verification'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -85,6 +96,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authentication/verification': {
+      id: '/_authentication/verification'
+      path: '/verification'
+      fullPath: '/verification'
+      preLoaderRoute: typeof AuthenticationVerificationRouteImport
+      parentRoute: typeof AuthenticationRoute
+    }
     '/_authentication/signup': {
       id: '/_authentication/signup'
       path: '/signup'
@@ -105,11 +123,13 @@ declare module '@tanstack/react-router' {
 interface AuthenticationRouteChildren {
   AuthenticationLoginRoute: typeof AuthenticationLoginRoute
   AuthenticationSignupRoute: typeof AuthenticationSignupRoute
+  AuthenticationVerificationRoute: typeof AuthenticationVerificationRoute
 }
 
 const AuthenticationRouteChildren: AuthenticationRouteChildren = {
   AuthenticationLoginRoute: AuthenticationLoginRoute,
   AuthenticationSignupRoute: AuthenticationSignupRoute,
+  AuthenticationVerificationRoute: AuthenticationVerificationRoute,
 }
 
 const AuthenticationRouteWithChildren = AuthenticationRoute._addFileChildren(

@@ -3,6 +3,7 @@ import { logger } from "./logger";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "./db";
 import bcrypt from "bcrypt";
+import { sendVerificationEmail } from "@huddle/email";
 
 const API_URL = process.env.API_URL || "http://localhost:5000";
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
@@ -46,7 +47,6 @@ try {
   }
 } catch {}
 
-
 export const auth = betterAuth({
   baseURL: baseURLWithoutPath,
   secret: process.env.BETTER_AUTH_SECRET || "",
@@ -58,6 +58,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
+    requireEmailVerification: true,
     password: {
       hash: async (password: string) => {
         return await bcrypt.hash(password, 10);
@@ -73,11 +74,22 @@ export const auth = betterAuth({
       },
     },
   },
+  emailVerification: {
+    autoSignInAfterVerification: true,
+    sendOnSignUp: true,
+    
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendVerificationEmail(user.email, "Verify Your Email", {
+        name: user.name,
+        verificationLink: url,
+      });
+    },
+  },
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }
+    },
   },
   session: {
     cookieCache: {
