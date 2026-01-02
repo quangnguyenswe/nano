@@ -2,10 +2,18 @@
   "name": "@huddle/email",
   "version": "1.0.0",
   "private": true,
-  "description": "",
-  "main": "index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
+    "build": "tsc",
     "dev": "email dev --port 3001 --dir src/templates",
+    "export": "email export",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -17,7 +25,8 @@
     "@types/nodemailer": "^7.0.4",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
-    "react-email": "5.1.1"
+    "react-email": "5.1.1",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@react-email/components": "1.0.3",
