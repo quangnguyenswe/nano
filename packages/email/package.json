@@ -12,7 +12,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "email dev --port 3001 --dir src/templates",
+    "email:dev": "email dev --port 3001 --dir src/templates",
     "export": "email export",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
