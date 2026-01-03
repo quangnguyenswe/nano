@@ -18,8 +18,8 @@ const RootLayout = () => (
     </div>
     <Toaster />
     <PageProgress />
-    <TanStackQueryDevtools />
-    <TanStackRouterDevtools />
+    {/* <TanStackQueryDevtools /> */}
+    {/* <TanStackRouterDevtools /> */}
   </>
 );
 

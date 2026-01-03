@@ -9,12 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as AuthenticationRouteImport } from './routes/_authentication'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LayoutChatRouteImport } from './routes/_layout/_chat'
 import { Route as AuthenticationVerificationRouteImport } from './routes/_authentication/verification'
 import { Route as AuthenticationSignupRouteImport } from './routes/_authentication/signup'
 import { Route as AuthenticationLoginRouteImport } from './routes/_authentication/login'
+import { Route as LayoutChatChatIndexRouteImport } from './routes/_layout/_chat/chat/index'
 
+const LayoutRoute = LayoutRouteImport.update({
+  id: '/_layout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticationRoute = AuthenticationRouteImport.update({
   id: '/_authentication',
   getParentRoute: () => rootRouteImport,
@@ -23,6 +30,10 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const LayoutChatRoute = LayoutChatRouteImport.update({
+  id: '/_chat',
+  getParentRoute: () => LayoutRoute,
 } as any)
 const AuthenticationVerificationRoute =
   AuthenticationVerificationRouteImport.update({
@@ -40,48 +51,69 @@ const AuthenticationLoginRoute = AuthenticationLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthenticationRoute,
 } as any)
+const LayoutChatChatIndexRoute = LayoutChatChatIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => LayoutChatRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof AuthenticationLoginRoute
   '/signup': typeof AuthenticationSignupRoute
   '/verification': typeof AuthenticationVerificationRoute
+  '/chat': typeof LayoutChatChatIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof AuthenticationLoginRoute
   '/signup': typeof AuthenticationSignupRoute
   '/verification': typeof AuthenticationVerificationRoute
+  '/chat': typeof LayoutChatChatIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authentication': typeof AuthenticationRouteWithChildren
+  '/_layout': typeof LayoutRouteWithChildren
   '/_authentication/login': typeof AuthenticationLoginRoute
   '/_authentication/signup': typeof AuthenticationSignupRoute
   '/_authentication/verification': typeof AuthenticationVerificationRoute
+  '/_layout/_chat': typeof LayoutChatRouteWithChildren
+  '/_layout/_chat/chat/': typeof LayoutChatChatIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/signup' | '/verification'
+  fullPaths: '/' | '/login' | '/signup' | '/verification' | '/chat'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/verification'
+  to: '/' | '/login' | '/signup' | '/verification' | '/chat'
   id:
     | '__root__'
     | '/'
     | '/_authentication'
+    | '/_layout'
     | '/_authentication/login'
     | '/_authentication/signup'
     | '/_authentication/verification'
+    | '/_layout/_chat'
+    | '/_layout/_chat/chat/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticationRoute: typeof AuthenticationRouteWithChildren
+  LayoutRoute: typeof LayoutRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_layout': {
+      id: '/_layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof LayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authentication': {
       id: '/_authentication'
       path: ''
@@ -95,6 +127,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_layout/_chat': {
+      id: '/_layout/_chat'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof LayoutChatRouteImport
+      parentRoute: typeof LayoutRoute
     }
     '/_authentication/verification': {
       id: '/_authentication/verification'
@@ -117,6 +156,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticationLoginRouteImport
       parentRoute: typeof AuthenticationRoute
     }
+    '/_layout/_chat/chat/': {
+      id: '/_layout/_chat/chat/'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof LayoutChatChatIndexRouteImport
+      parentRoute: typeof LayoutChatRoute
+    }
   }
 }
 
@@ -136,9 +182,33 @@ const AuthenticationRouteWithChildren = AuthenticationRoute._addFileChildren(
   AuthenticationRouteChildren,
 )
 
+interface LayoutChatRouteChildren {
+  LayoutChatChatIndexRoute: typeof LayoutChatChatIndexRoute
+}
+
+const LayoutChatRouteChildren: LayoutChatRouteChildren = {
+  LayoutChatChatIndexRoute: LayoutChatChatIndexRoute,
+}
+
+const LayoutChatRouteWithChildren = LayoutChatRoute._addFileChildren(
+  LayoutChatRouteChildren,
+)
+
+interface LayoutRouteChildren {
+  LayoutChatRoute: typeof LayoutChatRouteWithChildren
+}
+
+const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutChatRoute: LayoutChatRouteWithChildren,
+}
+
+const LayoutRouteWithChildren =
+  LayoutRoute._addFileChildren(LayoutRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticationRoute: AuthenticationRouteWithChildren,
+  LayoutRoute: LayoutRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

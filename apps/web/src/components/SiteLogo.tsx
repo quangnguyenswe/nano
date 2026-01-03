@@ -1,9 +1,21 @@
+import { cn } from "@/lib/classname";
 import { Link } from "@tanstack/react-router";
 import { MessagesSquare } from "lucide-react";
 
-export default function SiteLogo() {
+type SiteLogoProps = {
+  className?: string;
+};
+
+export default function SiteLogo(props: SiteLogoProps) {
+  const { className } = props;
   return (
-    <Link to="/" className="flex items-center gap-2 self-center font-medium">
+    <Link
+      to="/"
+      className={cn(
+        `flex items-center gap-2 self-center font-medium`,
+        className,
+      )}
+    >
       <div className="bg-teal-500 text-primary-foreground flex size-8 items-center justify-center rounded-md">
         <MessagesSquare className="size-5" />
       </div>

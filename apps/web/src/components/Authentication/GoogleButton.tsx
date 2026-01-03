@@ -36,7 +36,7 @@ export default function GoogleButton(props: GoogleButtonProps) {
     try {
       const res = await authClient.signIn.social({
         provider: "google",
-        callbackURL: `${import.meta.env.VITE_CLIENT_URL}`,
+        callbackURL: `${import.meta.env.VITE_CLIENT_URL}/chat`,
         errorCallbackURL: `${import.meta.env.VITE_CLIENT_URL}/login`,
       });
       if (res.error) {
