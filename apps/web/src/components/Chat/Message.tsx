@@ -6,9 +6,9 @@ import { Response } from "../Elements/response";
 // import { MessageEditor } from "./message-editor";
 // import { PreviewAttachment } from "./preview-attachment";
 import { cn } from "@/lib/classname";
-import useAuth from "@/hooks/use-auth";
 import { MessageContent } from "../Elements/message";
 import { Sparkle } from "lucide-react";
+import dayjs from "dayjs";
 
 interface PreviewMessageProps {
   chatId: string;
@@ -16,12 +16,24 @@ interface PreviewMessageProps {
   isLoading: boolean;
   setMessages: any; //(messages: ChatMessage[]) => void;
   requiresScrollPadding: boolean;
+  mine: boolean;
+  showAvatar: boolean;
+  showTimestamp: boolean;
+  showName: boolean;
 }
 
 const BasePreviewMessage = (props: PreviewMessageProps) => {
-  const { chatId, message, isLoading, setMessages } = props;
+  const {
+    chatId,
+    message,
+    isLoading,
+    setMessages,
+    showAvatar,
+    mine,
+    showTimestamp,
+    showName,
+  } = props;
   const [mode, setMode] = useState<"view" | "edit">("view");
-  const { user } = useAuth();
 
   // const attachmentsFromMessage = message.parts.filter(
   //   (part: any) => part.type === "file",
@@ -33,27 +45,40 @@ const BasePreviewMessage = (props: PreviewMessageProps) => {
       data-role={message.role}
       data-testid={`message-${message.role}`}
     >
-      <div
-        className={cn("flex w-full items-start gap-2 md:gap-3", {
-          "justify-end": message.userId === user?.id && mode !== "edit",
-          "justify-start": message.userId !== user?.id,
-        })}
-      >
-        {message.userId !== user?.id && (
-          <div className="-mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-background ring-1 ring-border">
-            <Sparkle size={14} />
+      {showTimestamp && (
+        <div className="flex items-center justify-center gap-3 font-bold text-gray-500 text-xs">
+          {dayjs(message.createdAt).format("h:mm A")}
+        </div>
+      )}
+
+      <div>
+        {showName && (
+          <div className="ml-10 pl-1.5 pb-0.5 text-xs text-gray-500 w-fit">
+            {message.userName || "User"}
           </div>
         )}
-
         <div
-          className={cn("flex flex-col", {
-            "gap-2 md:gap-4": mode === "view",
-            "w-full": message.userId !== user?.id || mode === "edit",
-            "max-w-[calc(100%-2.5rem)] sm:max-w-[min(fit-content,80%)]":
-              message.role === "user" && mode !== "edit",
+          className={cn("flex w-full items-center gap-2 md:gap-3", {
+            "justify-end": mine && mode !== "edit",
+            "justify-start": !mine,
           })}
         >
-          {/* {attachmentsFromMessage.length > 0 && (
+          {showAvatar && (
+            <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-background ring-1 ring-border">
+              <Sparkle size={14} />
+            </div>
+          )}
+          {!showAvatar && !mine && <div className="size-7" />}
+
+          <div
+            className={cn("flex flex-col", {
+              "gap-2 md:gap-4": mode === "view",
+              "w-full": mode === "edit",
+              "max-w-[calc(100%-5rem)] sm:max-w-[min(fit-content,80%)]":
+                mode !== "edit",
+            })}
+          >
+            {/* {attachmentsFromMessage.length > 0 && (
             <div
               className="flex flex-row justify-end gap-2"
               data-testid={"message-attachments"}
@@ -71,26 +96,19 @@ const BasePreviewMessage = (props: PreviewMessageProps) => {
             </div>
           )} */}
 
-          <div>
-            <MessageContent
-              className={cn({
-                "wrap-break-word w-fit rounded-2xl px-3 py-1.5 text-right text-white":
-                  message.userId === user?.id,
-                "bg-transparent px-0 py-0 text-left":
-                  message.userId !== user?.id,
-              })}
-              data-testid="message-content"
-              style={
-                message.userId === user?.id
-                  ? { backgroundColor: "#006cff" }
-                  : { backgroundColor: "GrayText"}
-              }
-            >
-              <Response>{message.content}</Response>
-            </MessageContent>
-          </div>
+            <div>
+              <MessageContent
+                className={cn("px-3 py-1.5 wrap-break-word w-fit rounded-lg", {
+                  "bg-teal-500 text-right text-white": mine,
+                  "bg-slate-200 text-left": !mine,
+                })}
+                data-testid="message-content"
+              >
+                <Response>{message.content}</Response>
+              </MessageContent>
+            </div>
 
-          {/* {message.content?.map((part: any, index: number) => {
+            {/* {message.content?.map((part: any, index: number) => {
             const { type } = part;
             const key = `message-${message.id}-part-${index}`;
 
@@ -141,7 +159,7 @@ const BasePreviewMessage = (props: PreviewMessageProps) => {
             return null;
           })} */}
 
-          {/* {!isReadonly && (
+            {/* {!isReadonly && (
             <MessageActions
               chatId={chatId}
               isLoading={isLoading}
@@ -151,6 +169,7 @@ const BasePreviewMessage = (props: PreviewMessageProps) => {
               vote={vote}
             />
           )} */}
+          </div>
         </div>
       </div>
     </div>

@@ -3,6 +3,8 @@ import { ArrowDownIcon } from "lucide-react";
 import { memo } from "react";
 import { PreviewMessage } from "./Message";
 import equal from "fast-deep-equal";
+import useAuth from "@/hooks/use-auth";
+import dayjs from "dayjs";
 
 interface MessagesProps {
   chatId: string;
@@ -12,6 +14,7 @@ interface MessagesProps {
 }
 export default function BaseMessages(props: MessagesProps) {
   const { status, messages, setMessages, chatId } = props;
+  const { user } = useAuth();
   const {
     containerRef: messagesContainerRef,
     endRef: messagesEndRef,
@@ -21,6 +24,7 @@ export default function BaseMessages(props: MessagesProps) {
   } = useMessages({
     status: status,
   });
+
   return (
     <div className="relative flex-1">
       <div
@@ -30,18 +34,34 @@ export default function BaseMessages(props: MessagesProps) {
         <div className="mx-auto flex min-w-0 max-w-4xl flex-col gap-1 px-2 py-4 md:px-4">
           {messages.length === 0 && <>No messages</>}
 
-          {messages.map((message, index) => (
-            <PreviewMessage
-              chatId={chatId}
-              isLoading={messages.length - 1 === index}
-              key={message.id}
-              message={message}
-              requiresScrollPadding={
-                hasSentMessage && index === messages.length - 1
-              }
-              setMessages={setMessages}
-            />
-          ))}
+          {messages.map((message, index) => {
+            const mine = message.userId === user?.id;
+            const showAvatar =
+              !mine && messages[index + 1]?.userId !== message.userId;
+            const showName =
+              !mine && messages[index - 1]?.userId !== message.userId;
+            const showTimestamp =
+              dayjs(message.createdAt).diff(
+                dayjs(messages[index - 1]?.createdAt),
+                "minutes",
+              ) > 10; // Show timestamp if more than 10 minutes have passed since the last message(testing)
+            return (
+              <PreviewMessage
+                chatId={chatId}
+                isLoading={messages.length - 1 === index}
+                key={message.id}
+                message={message}
+                requiresScrollPadding={
+                  hasSentMessage && index === messages.length - 1
+                }
+                setMessages={setMessages}
+                mine={mine}
+                showAvatar={showAvatar}
+                showTimestamp={showTimestamp}
+                showName={showName}
+              />
+            );
+          })}
 
           <div className="min-h-6 min-w-6 shrink-0" ref={messagesEndRef} />
         </div>

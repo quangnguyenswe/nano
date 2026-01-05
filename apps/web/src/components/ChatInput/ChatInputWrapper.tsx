@@ -61,7 +61,12 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
     //TODO: Implement message sending logic here
     setMessages([
       ...messages,
-      { id: Date.now().toString(), content: input, userId: user },
+      {
+        id: Date.now().toString(),
+        content: input,
+        userId: user?.id,
+        createdAt: new Date().toISOString(),
+      },
     ]);
 
     resetHeight();
