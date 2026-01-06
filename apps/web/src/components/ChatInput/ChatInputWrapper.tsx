@@ -56,7 +56,7 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
 
   const submitForm = useCallback(() => {
     // Update the URL to include the chat ID without reloading the page
-    // window.history.pushState({}, "", `/chat/${chatId}`);
+    window.history.pushState({}, "", `/chat/${chatId}`);
 
     //TODO: Implement message sending logic here
     setMessages([

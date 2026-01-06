@@ -17,6 +17,7 @@ import { Route as AuthenticationVerificationRouteImport } from './routes/_authen
 import { Route as AuthenticationSignupRouteImport } from './routes/_authentication/signup'
 import { Route as AuthenticationLoginRouteImport } from './routes/_authentication/login'
 import { Route as LayoutChatChatIndexRouteImport } from './routes/_layout/_chat/chat/index'
+import { Route as LayoutChatChatChatIdRouteImport } from './routes/_layout/_chat/chat/$chatId'
 
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
@@ -56,12 +57,18 @@ const LayoutChatChatIndexRoute = LayoutChatChatIndexRouteImport.update({
   path: '/chat/',
   getParentRoute: () => LayoutChatRoute,
 } as any)
+const LayoutChatChatChatIdRoute = LayoutChatChatChatIdRouteImport.update({
+  id: '/chat/$chatId',
+  path: '/chat/$chatId',
+  getParentRoute: () => LayoutChatRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof AuthenticationLoginRoute
   '/signup': typeof AuthenticationSignupRoute
   '/verification': typeof AuthenticationVerificationRoute
+  '/chat/$chatId': typeof LayoutChatChatChatIdRoute
   '/chat': typeof LayoutChatChatIndexRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/login': typeof AuthenticationLoginRoute
   '/signup': typeof AuthenticationSignupRoute
   '/verification': typeof AuthenticationVerificationRoute
+  '/chat/$chatId': typeof LayoutChatChatChatIdRoute
   '/chat': typeof LayoutChatChatIndexRoute
 }
 export interface FileRoutesById {
@@ -80,13 +88,20 @@ export interface FileRoutesById {
   '/_authentication/signup': typeof AuthenticationSignupRoute
   '/_authentication/verification': typeof AuthenticationVerificationRoute
   '/_layout/_chat': typeof LayoutChatRouteWithChildren
+  '/_layout/_chat/chat/$chatId': typeof LayoutChatChatChatIdRoute
   '/_layout/_chat/chat/': typeof LayoutChatChatIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/signup' | '/verification' | '/chat'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/verification'
+    | '/chat/$chatId'
+    | '/chat'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/verification' | '/chat'
+  to: '/' | '/login' | '/signup' | '/verification' | '/chat/$chatId' | '/chat'
   id:
     | '__root__'
     | '/'
@@ -96,6 +111,7 @@ export interface FileRouteTypes {
     | '/_authentication/signup'
     | '/_authentication/verification'
     | '/_layout/_chat'
+    | '/_layout/_chat/chat/$chatId'
     | '/_layout/_chat/chat/'
   fileRoutesById: FileRoutesById
 }
@@ -163,6 +179,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutChatChatIndexRouteImport
       parentRoute: typeof LayoutChatRoute
     }
+    '/_layout/_chat/chat/$chatId': {
+      id: '/_layout/_chat/chat/$chatId'
+      path: '/chat/$chatId'
+      fullPath: '/chat/$chatId'
+      preLoaderRoute: typeof LayoutChatChatChatIdRouteImport
+      parentRoute: typeof LayoutChatRoute
+    }
   }
 }
 
@@ -183,10 +206,12 @@ const AuthenticationRouteWithChildren = AuthenticationRoute._addFileChildren(
 )
 
 interface LayoutChatRouteChildren {
+  LayoutChatChatChatIdRoute: typeof LayoutChatChatChatIdRoute
   LayoutChatChatIndexRoute: typeof LayoutChatChatIndexRoute
 }
 
 const LayoutChatRouteChildren: LayoutChatRouteChildren = {
+  LayoutChatChatChatIdRoute: LayoutChatChatChatIdRoute,
   LayoutChatChatIndexRoute: LayoutChatChatIndexRoute,
 }
 

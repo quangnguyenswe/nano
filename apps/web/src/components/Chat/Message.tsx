@@ -183,7 +183,10 @@ export const PreviewMessage = memo(
       prevProps.isLoading === nextProps.isLoading &&
       prevProps.message.id === nextProps.message.id &&
       prevProps.requiresScrollPadding === nextProps.requiresScrollPadding &&
-      equal(prevProps.message.parts, nextProps.message.parts)
+      prevProps.showAvatar === nextProps.showAvatar &&
+      prevProps.showName === nextProps.showName &&
+      prevProps.showTimestamp === nextProps.showTimestamp &&
+      equal(prevProps.message, nextProps.message)
     ) {
       return true;
     }

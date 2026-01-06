@@ -13,7 +13,12 @@ export default function Chat(props: ChatProps) {
   const [messages, setMessages] = useState(initialMessages);
   return (
     <>
-      <Messages chatId={id} status="idle" messages={messages} setMessages={setMessages} />
+      <Messages
+        chatId={id}
+        status="idle"
+        messages={messages}
+        setMessages={setMessages}
+      />
       <div className="sticky bottom-0 z-1 mx-auto flex w-full max-w-4xl gap-2 border-t-0 bg-background px-2 pb-3 md:px-4 md:pb-4 pt-1 md:pt-2">
         <ChatInputWrapper
           input={input}
