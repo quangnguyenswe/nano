@@ -1,4 +1,5 @@
 import { createAuthClient } from "better-auth/react";
+import { oneTimeTokenClient } from "better-auth/client/plugins"
 
 const getBaseURL = () => {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -13,4 +14,7 @@ const getBaseURL = () => {
 export const authClient = createAuthClient({
   baseURL: getBaseURL(),
   basePath: "/api/auth",
+  plugins: [
+    oneTimeTokenClient()
+  ]
 })

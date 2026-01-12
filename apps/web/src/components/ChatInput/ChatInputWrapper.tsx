@@ -5,20 +5,24 @@ import { Send } from "lucide-react";
 import { Button } from "../ui/button";
 import { isMobile } from "@/lib/mobile";
 import useAuth from "@/hooks/use-auth";
+import { useSocket } from "@/providers/socket";
+import { nanoid } from "nanoid";
 
 type ChatInputWrapperProps = {
   className?: string;
   input: string;
   setInput: (input: string) => void;
   messages: any[];
-  setMessages: (messages: any[]) => void;
+  setMessages: React.Dispatch<React.SetStateAction<any[]>>;
   chatId: string;
 };
 
 export default function ChatInputWrapper(props: ChatInputWrapperProps) {
-  const { className, input, setInput, messages, setMessages, chatId } = props;
+  const { className, input, setInput, setMessages, chatId } = props;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasAutoFocused = useRef(false);
+
+  const { socket } = useSocket();
   const { user } = useAuth();
 
   const adjustHeight = useCallback(() => {
@@ -58,23 +62,31 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
     // Update the URL to include the chat ID without reloading the page
     window.history.pushState({}, "", `/chat/${chatId}`);
 
-    //TODO: Implement message sending logic here
-    setMessages([
-      ...messages,
-      {
-        id: Date.now().toString(),
-        content: input,
-        userId: user?.id,
-        createdAt: new Date().toISOString(),
-      },
-    ]);
+    const messageId = nanoid();
+    const timestamp = new Date().toISOString();
 
+    // Add the sender's own message to the UI immediately
+    const newMessage = {
+      id: messageId,
+      content: input,
+      userId: user?.id || socket?.id, // Use user ID if available, fallback to socket ID
+      userName: user?.name || user?.email || "You",
+      createdAt: timestamp,
+    };
+
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+    socket?.emit("send-message", {
+      messageId,
+      content: input,
+      timestamp,
+    });
     resetHeight();
     setInput("");
     if (!isMobile()) {
       textareaRef.current?.focus();
     }
-  }, [chatId, resetHeight, setInput, input]);
+  }, [chatId, resetHeight, setInput, input, setMessages, socket, user]);
 
   return (
     <div className={cn("relative flex w-full flex-col gap-4", className)}>

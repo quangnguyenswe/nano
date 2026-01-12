@@ -4,6 +4,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "./db";
 import bcrypt from "bcrypt";
 import { sendVerificationEmail } from "@huddle/email";
+import { oneTimeToken } from "better-auth/plugins";
 
 const API_URL = process.env.API_URL || "http://localhost:5000";
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
@@ -77,7 +78,7 @@ export const auth = betterAuth({
   emailVerification: {
     autoSignInAfterVerification: true,
     sendOnSignUp: true,
-    
+
     sendVerificationEmail: async ({ user, url }) => {
       await sendVerificationEmail(user.email, "Verify Your Email", {
         name: user.name,
@@ -107,4 +108,9 @@ export const auth = betterAuth({
       domain: process.env.COOKIE_DOMAIN || undefined, // Optional: e.g., ".andrej.com" for explicit cross-subdomain cookies
     },
   },
+  plugins: [
+    oneTimeToken({
+      expiresIn: 24 * 60 * 60, // 24 hours - Socket.IO handles connection persistence with heartbeats
+    }),
+  ],
 });

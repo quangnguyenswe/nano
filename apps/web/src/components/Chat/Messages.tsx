@@ -1,20 +1,23 @@
 import { useMessages } from "@/hooks/use-messages";
 import { ArrowDownIcon } from "lucide-react";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { PreviewMessage } from "./Message";
 import equal from "fast-deep-equal";
 import useAuth from "@/hooks/use-auth";
 import dayjs from "dayjs";
+import { useSocket } from "@/providers/socket";
+import { nanoid } from "nanoid";
 
 interface MessagesProps {
   chatId: string;
   status: "idle" | "submitting" | "submitted";
   messages: any[];
-  setMessages: (messages: any[]) => void;
+  setMessages: React.Dispatch<React.SetStateAction<any[]>>;
 }
 export default function BaseMessages(props: MessagesProps) {
   const { status, messages, setMessages, chatId } = props;
   const { user } = useAuth();
+  const { socket, onMessageUpdate } = useSocket();
   const {
     containerRef: messagesContainerRef,
     endRef: messagesEndRef,
@@ -24,6 +27,32 @@ export default function BaseMessages(props: MessagesProps) {
   } = useMessages({
     status: status,
   });
+
+  // Handle incoming messages from other users
+  useEffect(() => {
+    const handleNewMessage = (data: any) => {
+      console.log("Messages component received new message:", data);
+      // Only add messages for the current chat
+      if (data.chatId === chatId) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: data.messageId || nanoid(),
+            content: data.content,
+            userId: data.userId,
+            userName: data.userName,
+            createdAt: data.timestamp,
+          },
+        ]);
+      }
+    };
+
+    onMessageUpdate(handleNewMessage);
+
+    return () => {
+      socket?.off("new-message", handleNewMessage);
+    };
+  }, [socket, setMessages, chatId]);
 
   return (
     <div className="relative flex-1">

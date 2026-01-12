@@ -8,8 +8,10 @@ import "dotenv/config";
 import { auth } from "./auth";
 import { Session, User } from "better-auth/types";
 import { Context } from "./shared/context";
+import { initializeSockets } from "./socket";
+import type { Server as HTTPServer } from "node:http";
 
-const isProd = process.env.NODE_ENV === "production";
+export const isProd = process.env.NODE_ENV === "production";
 const corsOrigins = process.env.CORS_ORIGINS?.split(",");
 
 const app = new Hono<Context>();
@@ -80,7 +82,7 @@ app.onError((err, c) => {
 });
 
 async function startServer() {
-  serve(
+  return serve(
     {
       fetch: app.fetch,
       port: Number(process.env.PORT),
@@ -91,9 +93,13 @@ async function startServer() {
   );
 }
 
-startServer().catch((error) => {
-  console.error("Failed to start server:", error);
-  process.exit(1);
-});
+startServer()
+  .then((httpServer) => {
+    initializeSockets(httpServer as HTTPServer);
+  })
+  .catch((error) => {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  });
 
 export type ApiRoutes = typeof routes;

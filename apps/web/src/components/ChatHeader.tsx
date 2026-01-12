@@ -5,6 +5,7 @@ import { useSidebar } from "./ui/sidebar";
 import { SidebarToggle } from "./ChatSidebar/SidebarToggle";
 import { PlusIcon } from "lucide-react";
 import { isMobileScreen } from "@/lib/mobile";
+import { authClient } from "@/lib/auth-client";
 
 type BaseChatHeaderProps = {
   chatId: string;
@@ -12,11 +13,9 @@ type BaseChatHeaderProps = {
 };
 
 function BaseChatHeader(props: BaseChatHeaderProps) {
-  const { chatId, isReadonly } = props;
   const { open } = useSidebar();
   const isMobile = isMobileScreen();
 
-  console.log(chatId, isReadonly);
 
   return (
     <header className="sticky top-0 flex items-center gap-2 bg-background px-2 py-1.5 md:px-2 border-b border-border">
