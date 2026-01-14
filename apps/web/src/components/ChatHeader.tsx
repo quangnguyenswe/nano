@@ -5,7 +5,6 @@ import { useSidebar } from "./ui/sidebar";
 import { SidebarToggle } from "./ChatSidebar/SidebarToggle";
 import { PlusIcon } from "lucide-react";
 import { isMobileScreen } from "@/lib/mobile";
-import { authClient } from "@/lib/auth-client";
 
 type BaseChatHeaderProps = {
   chatId: string;

@@ -1,6 +1,5 @@
 import { authClient } from "@/lib/auth-client";
 import { createLogger } from "@/lib/logger";
-import { useParams } from "@tanstack/react-router";
 import { User } from "better-auth/types";
 import {
   createContext,
@@ -44,12 +43,10 @@ export const useSocket = () => useContext(SocketContext);
 interface SocketProviderProps {
   children: ReactNode;
   user?: User;
+  chatId?: string;
 }
 
-export function SocketProvider({ children, user }: SocketProviderProps) {
-  const { chatId: urlChatflowId } = useParams({
-    from: "/_layout/_chat/chat/$chatId",
-  });
+export function SocketProvider({ children, user, chatId: urlChatflowId }: SocketProviderProps) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);

@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useParams } from "@tanstack/react-router";
 import {
   SIDEBAR_COOKIE_NAME,
   SidebarInset,
@@ -18,13 +18,15 @@ function RouteComponent() {
   const isCollapsed = cookieStore.get(SIDEBAR_COOKIE_NAME)?.value === "true";
   const { user } = useAuth();
 
+  const { chatId } = useParams({ strict: false })
+
   return (
-    <SocketProvider user={user!}>
+    <SocketProvider user={user!} chatId={chatId}>
       <SidebarProvider defaultOpen={!isCollapsed}>
         <ChatSidebar user={user} />
         <SidebarInset>
           <div className="overscroll-behavior-contain flex h-dvh min-w-0 touch-pan-y flex-col bg-background">
-            <ChatHeader chatId={"1243"} isReadonly={false} />
+            <ChatHeader chatId={chatId!} isReadonly={false} />
             <Outlet />
           </div>
         </SidebarInset>
