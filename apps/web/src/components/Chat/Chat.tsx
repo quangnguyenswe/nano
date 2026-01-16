@@ -15,7 +15,6 @@ export default function Chat(props: ChatProps) {
     <>
       <Messages
         chatId={id}
-        status="idle"
         messages={messages}
         setMessages={setMessages}
       />

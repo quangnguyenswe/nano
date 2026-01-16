@@ -1,11 +1,9 @@
 import {
   CornerDownLeftIcon,
   ImageIcon,
-  Loader2Icon,
   MicIcon,
   PaperclipIcon,
   PlusIcon,
-  SquareIcon,
   XIcon,
 } from "lucide-react";
 import { nanoid } from "nanoid";
@@ -1043,27 +1041,16 @@ export const ChatInputActionMenuItem = ({
 // Note: Actions that perform side-effects (like opening a file dialog)
 // are provided in opt-in modules (e.g., Chat-input-attachments).
 
-export type ChatInputSubmitProps = ComponentProps<typeof InputGroupButton> & {
-  status?: any;
-};
+export type ChatInputSubmitProps = ComponentProps<typeof InputGroupButton>;
 
 export const ChatInputSubmit = ({
   className,
   variant = "default",
   size = "icon-sm",
-  status,
   children,
   ...props
 }: ChatInputSubmitProps) => {
   let Icon = <CornerDownLeftIcon className="size-4" />;
-
-  if (status === "submitted") {
-    Icon = <Loader2Icon className="size-4 animate-spin" />;
-  } else if (status === "streaming") {
-    Icon = <SquareIcon className="size-4" />;
-  } else if (status === "error") {
-    Icon = <XIcon className="size-4" />;
-  }
 
   return (
     <InputGroupButton

@@ -10,12 +10,11 @@ import { nanoid } from "nanoid";
 
 interface MessagesProps {
   chatId: string;
-  status: "idle" | "submitting" | "submitted";
   messages: any[];
   setMessages: React.Dispatch<React.SetStateAction<any[]>>;
 }
 export default function BaseMessages(props: MessagesProps) {
-  const { status, messages, setMessages, chatId } = props;
+  const { messages, setMessages, chatId } = props;
   const { user } = useAuth();
   const { socket, onMessageUpdate } = useSocket();
   const {
@@ -23,10 +22,7 @@ export default function BaseMessages(props: MessagesProps) {
     endRef: messagesEndRef,
     isAtBottom,
     scrollToBottom,
-    hasSentMessage,
-  } = useMessages({
-    status: status,
-  });
+  } = useMessages();
 
   // Handle incoming messages from other users
   useEffect(() => {
@@ -73,16 +69,14 @@ export default function BaseMessages(props: MessagesProps) {
               dayjs(message.createdAt).diff(
                 dayjs(messages[index - 1]?.createdAt),
                 "minutes",
-              ) > 10; // Show timestamp if more than 10 minutes have passed since the last message(testing)
+              ) > 10;
             return (
               <PreviewMessage
                 chatId={chatId}
                 isLoading={messages.length - 1 === index}
                 key={message.id}
                 message={message}
-                requiresScrollPadding={
-                  hasSentMessage && index === messages.length - 1
-                }
+                requiresScrollPadding={index === messages.length - 1}
                 setMessages={setMessages}
                 mine={mine}
                 showAvatar={showAvatar}
@@ -112,9 +106,6 @@ export default function BaseMessages(props: MessagesProps) {
 }
 
 export const Messages = memo(BaseMessages, (prevProps, nextProps) => {
-  if (prevProps.status !== nextProps.status) {
-    return false;
-  }
   if (prevProps.messages.length !== nextProps.messages.length) {
     return false;
   }

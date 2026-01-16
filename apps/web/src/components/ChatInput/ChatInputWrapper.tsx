@@ -22,7 +22,7 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasAutoFocused = useRef(false);
 
-  const { socket } = useSocket();
+  const { socket, emitMessage } = useSocket();
   const { user } = useAuth();
 
   const adjustHeight = useCallback(() => {
@@ -75,18 +75,14 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
     };
 
     setMessages((prevMessages) => [...prevMessages, newMessage]);
+    emitMessage(messageId, input, timestamp);
 
-    socket?.emit("send-message", {
-      messageId,
-      content: input,
-      timestamp,
-    });
     resetHeight();
     setInput("");
     if (!isMobile()) {
       textareaRef.current?.focus();
     }
-  }, [chatId, resetHeight, setInput, input, setMessages, socket, user]);
+  }, [chatId, resetHeight, setInput, input, setMessages, emitMessage, user]);
 
   return (
     <div className={cn("relative flex w-full flex-col gap-4", className)}>
