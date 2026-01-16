@@ -27,8 +27,7 @@ export default function BaseMessages(props: MessagesProps) {
   // Handle incoming messages from other users
   useEffect(() => {
     const handleNewMessage = (data: any) => {
-      console.log("Messages component received new message:", data);
-      // Only add messages for the current chat
+      // TODO: Save message to IndexedDB for offline support
       if (data.chatId === chatId) {
         setMessages((prevMessages) => [
           ...prevMessages,
