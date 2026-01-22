@@ -7,11 +7,12 @@ import useAuth from "@/hooks/use-auth";
 import dayjs from "dayjs";
 import { useSocket } from "@/providers/socket";
 import { nanoid } from "nanoid";
+import { type ChatMessage, MessageStatus, MessageType } from "@/types/message";
 
 interface MessagesProps {
   chatId: string;
-  messages: any[];
-  setMessages: React.Dispatch<React.SetStateAction<any[]>>;
+  messages: ChatMessage[];
+  setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 }
 export default function BaseMessages(props: MessagesProps) {
   const { messages, setMessages, chatId } = props;
@@ -36,7 +37,9 @@ export default function BaseMessages(props: MessagesProps) {
             content: data.content,
             userId: data.userId,
             userName: data.userName,
-            createdAt: data.timestamp,
+            type: MessageType.TEXT,
+            timestamp: data.timestamp,
+            status: MessageStatus.SENT,
           },
         ]);
       }
@@ -65,8 +68,8 @@ export default function BaseMessages(props: MessagesProps) {
             const showName =
               !mine && messages[index - 1]?.userId !== message.userId;
             const showTimestamp =
-              dayjs(message.createdAt).diff(
-                dayjs(messages[index - 1]?.createdAt),
+              dayjs(message.timestamp).diff(
+                dayjs(messages[index - 1]?.timestamp),
                 "minutes",
               ) > 10;
             return (

@@ -29,6 +29,7 @@ import { User } from "better-auth/types";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { SidebarUser } from "./SidebarUser";
 import SiteLogo from "../SiteLogo";
+import { useNavigate } from "@tanstack/react-router";
 
 type ChatSidebarProps = {
   user: User | undefined | null;
@@ -39,6 +40,8 @@ export function ChatSidebar(props: ChatSidebarProps) {
   const { setOpenMobile } = useSidebar();
 
   const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleDeleteAll = () => {
     toast.success("All chats deleted");
@@ -82,7 +85,13 @@ export function ChatSidebar(props: ChatSidebarProps) {
                       <PlusIcon />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent align="end" className="hidden md:block">
+                  <TooltipContent
+                    align="end"
+                    className="hidden md:block"
+                    onClick={() => {
+                      navigate({ to: "/chat/new" });
+                    }}
+                  >
                     New Chat
                   </TooltipContent>
                 </Tooltip>

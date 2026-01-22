@@ -5,6 +5,7 @@ import { useSidebar } from "./ui/sidebar";
 import { SidebarToggle } from "./ChatSidebar/SidebarToggle";
 import { PlusIcon } from "lucide-react";
 import { isMobileScreen } from "@/lib/mobile";
+import { useNavigate } from "@tanstack/react-router";
 
 type BaseChatHeaderProps = {
   chatId: string;
@@ -14,7 +15,7 @@ type BaseChatHeaderProps = {
 function BaseChatHeader(props: BaseChatHeaderProps) {
   const { open } = useSidebar();
   const isMobile = isMobileScreen();
-
+  const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 flex items-center gap-2 bg-background px-2 py-1.5 md:px-2 border-b border-border">
@@ -24,7 +25,7 @@ function BaseChatHeader(props: BaseChatHeaderProps) {
         <Button
           className="order-2 ml-auto h-8 px-2 md:order-1 md:ml-0 md:h-fit md:px-2"
           onClick={() => {
-            //TODO: implement new chat functionality
+            navigate({ to: "/chat/new" });
           }}
           variant="outline"
         >

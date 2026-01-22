@@ -9,12 +9,13 @@ import { cn } from "@/lib/classname";
 import { MessageContent } from "../Elements/message";
 import { Sparkle } from "lucide-react";
 import dayjs from "dayjs";
+import { ChatMessage } from "@/types/message";
 
 interface PreviewMessageProps {
   chatId: string;
-  message: any; //ChatMessage;
+  message: ChatMessage;
   isLoading: boolean;
-  setMessages: any; //(messages: ChatMessage[]) => void;
+  setMessages: (messages: ChatMessage[]) => void; //
   requiresScrollPadding: boolean;
   mine: boolean;
   showAvatar: boolean;
@@ -42,12 +43,10 @@ const BasePreviewMessage = (props: PreviewMessageProps) => {
   return (
     <div
       className="group/message fade-in w-full animate-in duration-200"
-      data-role={message.role}
-      data-testid={`message-${message.role}`}
     >
       {showTimestamp && (
         <div className="flex items-center justify-center gap-3 font-bold text-gray-500 text-xs">
-          {dayjs(message.createdAt).format("h:mm A")}
+          {dayjs(message.timestamp).format("h:mm A")}
         </div>
       )}
 
