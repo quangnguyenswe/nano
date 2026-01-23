@@ -55,3 +55,37 @@ export const listChatRoomsFromLocalStorage = (): LocalStorageChatRooms => {
     return {};
   }
 };
+
+export const getChatRooms = (): ChatRoomMetadata[] => {
+  const chatRoomsData = listChatRoomsFromLocalStorage();
+  return Object.entries(chatRoomsData).map(([id, roomData]) => ({
+    id,
+    ...roomData,
+  }));
+}
+
+export const deleteChatRoomFromLocalStorage = (chatId: string) => {
+  try {
+    const chatRooms = listChatRoomsFromLocalStorage();
+    delete chatRooms[chatId];
+    localStorage.setItem(
+      `${STORAGE_KEYS.LOCAL_STORAGE_CHATS}`,
+      JSON.stringify(chatRooms),
+    );
+    return true;
+  }
+  catch (error) {
+    logger.error("Failed to delete chat room from localStorage:", error);
+    return false;
+  }
+};
+
+export const deleteAllChatRoomsFromLocalStorage = () => {
+  try {
+    localStorage.removeItem(`${STORAGE_KEYS.LOCAL_STORAGE_CHATS}`);
+    return true;
+  } catch (error) {
+    logger.error("Failed to delete all chat rooms from localStorage:", error);
+    return false;
+  }
+}

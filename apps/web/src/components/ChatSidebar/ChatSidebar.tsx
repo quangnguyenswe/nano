@@ -30,6 +30,8 @@ import { PlusIcon, TrashIcon } from "lucide-react";
 import { SidebarUser } from "./SidebarUser";
 import SiteLogo from "../SiteLogo";
 import { useNavigate } from "@tanstack/react-router";
+import { SidebarHistory } from "./ChatHistory";
+import { deleteAllChatRoomsFromLocalStorage } from "@/data/localStorage";
 
 type ChatSidebarProps = {
   user: User | undefined | null;
@@ -44,6 +46,11 @@ export function ChatSidebar(props: ChatSidebarProps) {
   const navigate = useNavigate();
 
   const handleDeleteAll = () => {
+    const result = deleteAllChatRoomsFromLocalStorage();
+    if (!result) {
+      toast.error("Failed to delete all chats");
+      return;
+    }
     toast.success("All chats deleted");
   };
 
@@ -77,7 +84,7 @@ export function ChatSidebar(props: ChatSidebarProps) {
                     <Button
                       className="h-8 p-1 md:h-fit md:p-2"
                       onClick={() => {
-                        setOpenMobile(false);
+                        navigate({ to: "/chat/new" });
                       }}
                       type="button"
                       variant="ghost"
@@ -85,13 +92,7 @@ export function ChatSidebar(props: ChatSidebarProps) {
                       <PlusIcon />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent
-                    align="end"
-                    className="hidden md:block"
-                    onClick={() => {
-                      navigate({ to: "/chat/new" });
-                    }}
-                  >
+                  <TooltipContent align="end" className="hidden md:block">
                     New Chat
                   </TooltipContent>
                 </Tooltip>
@@ -99,7 +100,9 @@ export function ChatSidebar(props: ChatSidebarProps) {
             </div>
           </SidebarMenu>
         </SidebarHeader>
-        <SidebarContent>{/* <SidebarHistory user={user} /> */}</SidebarContent>
+        <SidebarContent>
+          <SidebarHistory user={user!} />
+        </SidebarContent>
         <SidebarFooter>{user && <SidebarUser user={user} />}</SidebarFooter>
         <SidebarRail />
       </Sidebar>
