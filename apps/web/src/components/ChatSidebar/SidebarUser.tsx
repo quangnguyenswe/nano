@@ -46,7 +46,7 @@ export function SidebarUser(props: SidebarUserProps) {
             >
               <Avatar className="h-8 w-8 rounded-full cursor-pointer bg-white">
                 <AvatarImage
-                  src={user?.image || "images/default-avatar.png"}
+                  src={user?.image || "/images/default-avatar.png"}
                   alt={user.name}
                 />
                 <AvatarFallback className="rounded-lg">

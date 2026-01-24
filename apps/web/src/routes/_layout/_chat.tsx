@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_layout/_chat")({
 });
 
 function RouteComponent() {
-  const isCollapsed = cookieStore.get(SIDEBAR_COOKIE_NAME)?.value === "true";
+  const isCollapsed = cookieStore.get(SIDEBAR_COOKIE_NAME)?.value === "false";
   const { user } = useAuth();
 
   const { chatId } = useParams({ strict: false })

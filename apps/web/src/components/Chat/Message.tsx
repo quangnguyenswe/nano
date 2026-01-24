@@ -1,6 +1,5 @@
 import equal from "fast-deep-equal";
 import { memo, useState } from "react";
-// import type { ChatMessage } from "@/lib/types";
 // import { cn, sanitizeText } from "@/lib/utils";
 import { Response } from "../Elements/response";
 // import { MessageEditor } from "./message-editor";
@@ -10,6 +9,7 @@ import { MessageContent } from "../Elements/message";
 import { Sparkle } from "lucide-react";
 import dayjs from "dayjs";
 import { ChatMessage } from "@/types/message";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface PreviewMessageProps {
   chatId: string;
@@ -41,9 +41,7 @@ const BasePreviewMessage = (props: PreviewMessageProps) => {
   // );
 
   return (
-    <div
-      className="group/message fade-in w-full animate-in duration-200"
-    >
+    <div className="group/message fade-in w-full animate-in duration-200">
       {showTimestamp && (
         <div className="flex items-center justify-center gap-3 font-bold text-gray-500 text-xs">
           {dayjs(message.timestamp).format("h:mm A")}
@@ -58,14 +56,20 @@ const BasePreviewMessage = (props: PreviewMessageProps) => {
         )}
         <div
           className={cn("flex w-full items-center gap-2 md:gap-3", {
-            "justify-end": mine && mode !== "edit",
+            "justify-end": mine,
             "justify-start": !mine,
           })}
         >
           {showAvatar && (
-            <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-background ring-1 ring-border">
-              <Sparkle size={14} />
-            </div>
+            <Avatar className="h-7 w-7 rounded-full bg-background ring-1 ring-border">
+              <AvatarImage
+                src={"/images/default-avatar.png"}
+                alt={message.userName || "User"}
+              />
+              <AvatarFallback className="rounded-lg text-xs">
+                {message.userName?.[0] || "U"}
+              </AvatarFallback>
+            </Avatar>
           )}
           {!showAvatar && !mine && <div className="size-7" />}
 

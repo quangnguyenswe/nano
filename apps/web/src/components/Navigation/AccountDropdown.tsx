@@ -40,7 +40,7 @@ export default function AccountDropdown(props: AccountDropdownProps) {
         <Button variant="ghost" className="p-0 h-full">
           <Avatar className="h-8 w-8 rounded-md cursor-pointer">
             <AvatarImage
-              src={user?.image || "images/default-avatar.png"}
+              src={user?.image || "/images/default-avatar.png"}
               alt={user.name}
             />
             <AvatarFallback className="rounded-lg">
