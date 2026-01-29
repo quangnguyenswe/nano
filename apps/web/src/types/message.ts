@@ -13,10 +13,23 @@ export enum MessageType {
   VIDEO = "video",
 }
 
+const MemberSchema = z.object({
+  name: z.string(),
+  avatar: z.string().optional(),
+})
+
+export type Member = z.infer<typeof MemberSchema>;
+
+const ChatMemberSchema = z.record(
+  z.string(),
+  MemberSchema,
+)
+
 const ChatRoomMetadataSchema = z.object({
   id: z.string(),
   name: z.string(),
   createdAt: z.number(),
+  members: ChatMemberSchema.optional(),
   lastUpdated: z.number(),
   unreadCount: z.number().optional(),
 })

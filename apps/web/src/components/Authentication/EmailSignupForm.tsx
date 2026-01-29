@@ -49,7 +49,7 @@ export default function EmailSignupForm(props: EmailSignUpFormProps) {
         email: data.email,
         name: data.name,
         password: data.password,
-        callbackURL: `${import.meta.env.VITE_CLIENT_URL}/chat`,
+        callbackURL: `${import.meta.env.VITE_CLIENT_URL}`,
       });
 
       if (result.error) {

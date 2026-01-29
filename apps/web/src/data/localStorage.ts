@@ -58,10 +58,11 @@ export const listChatRoomsFromLocalStorage = (): LocalStorageChatRooms => {
 
 export const getChatRooms = (): ChatRoomMetadata[] => {
   const chatRoomsData = listChatRoomsFromLocalStorage();
-  return Object.entries(chatRoomsData).map(([id, roomData]) => ({
+  const chatRooms = Object.entries(chatRoomsData).map(([id, roomData]) => ({
     id,
     ...roomData,
   }));
+  return chatRooms.sort((a, b) => b.lastUpdated - a.lastUpdated);
 }
 
 export const deleteChatRoomFromLocalStorage = (chatId: string) => {
@@ -88,4 +89,14 @@ export const deleteAllChatRoomsFromLocalStorage = () => {
     logger.error("Failed to delete all chat rooms from localStorage:", error);
     return false;
   }
+}
+
+export const getLatestChatRoom = () => {
+  const chatRooms = getChatRooms();
+  if (chatRooms.length === 0) {
+    return null;
+  }
+  return chatRooms.reduce((latest, room) => {
+    return room.lastUpdated > latest.lastUpdated ? room : latest;
+  }, chatRooms[0]);
 }
