@@ -12,10 +12,13 @@ import { type ChatMessage, MessageStatus, MessageType } from "@/types/message";
 interface MessagesProps {
   chatId: string;
   messages: ChatMessage[];
-  setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
+  setMessages: (
+    messages: ChatMessage[] | ((msgs: ChatMessage[]) => ChatMessage[]),
+  ) => void;
+  isLoading: boolean;
 }
 export default function BaseMessages(props: MessagesProps) {
-  const { messages, setMessages, chatId } = props;
+  const { messages, setMessages, chatId, isLoading } = props;
   const { user } = useAuth();
   const { socket, onMessageUpdate } = useSocket();
   const {
@@ -75,7 +78,7 @@ export default function BaseMessages(props: MessagesProps) {
             return (
               <PreviewMessage
                 chatId={chatId}
-                isLoading={messages.length - 1 === index}
+                isLoading={isLoading && messages.length - 1 === index}
                 key={message.id}
                 message={message}
                 requiresScrollPadding={index === messages.length - 1}

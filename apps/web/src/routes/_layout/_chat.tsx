@@ -9,6 +9,7 @@ import { cookieStore } from "@/lib/cookies";
 import { ChatSidebar } from "@/components/ChatSidebar/ChatSidebar";
 import { ChatHeader } from "@/components/ChatHeader";
 import { SocketProvider } from "@/providers/socket";
+import { MessageJotaiProvider, MessageJotaiStore } from "@/store/jotai/message-jotai";
 
 export const Route = createFileRoute("/_layout/_chat")({
   component: RouteComponent,
@@ -23,6 +24,7 @@ function RouteComponent() {
   return (
     <SocketProvider user={user!} chatId={chatId}>
       <SidebarProvider defaultOpen={!isCollapsed}>
+        <MessageJotaiProvider store={MessageJotaiStore}>
         <ChatSidebar user={user} />
         <SidebarInset>
           <div className="overscroll-behavior-contain flex h-dvh min-w-0 touch-pan-y flex-col bg-background">
@@ -30,6 +32,7 @@ function RouteComponent() {
             <Outlet />
           </div>
         </SidebarInset>
+        </MessageJotaiProvider>
       </SidebarProvider>
     </SocketProvider>
   );

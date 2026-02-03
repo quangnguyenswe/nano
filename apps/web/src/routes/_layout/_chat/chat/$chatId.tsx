@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_layout/_chat/chat/$chatId")({
     // if (!chat) {
     //   context.navigate({ to: "/chat" });
     // }
-  }
+  },
 });
 
 function RouteComponent() {
@@ -28,5 +28,5 @@ function RouteComponent() {
   // const uiMessages = convertToUIMessages(messagesFromDb);
 
   // return <Chat id={chatId} initialMessages={uiMessages} />;
-  return <Chat id={chatId} initialMessages={[]}/>;
+  return <Chat id={chatId} />;
 }

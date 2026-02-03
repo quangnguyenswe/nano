@@ -7,18 +7,28 @@ import { isMobile } from "@/lib/mobile";
 import useAuth from "@/hooks/use-auth";
 import { useSocket } from "@/providers/socket";
 import { nanoid } from "nanoid";
+import { ChatMessage, MessageStatus, MessageType } from "@/types/message";
 
 type ChatInputWrapperProps = {
   className?: string;
   input: string;
   setInput: (input: string) => void;
-  messages: any[];
-  setMessages: React.Dispatch<React.SetStateAction<any[]>>;
+  messages: ChatMessage[];
+  setMessages: (
+    messages: ChatMessage[] | ((msgs: ChatMessage[]) => ChatMessage[]),
+  ) => void;
   chatId: string;
 };
 
 export default function ChatInputWrapper(props: ChatInputWrapperProps) {
-  const { className, input, setInput, setMessages, chatId } = props;
+  const {
+    className,
+    input,
+    setInput,
+    messages,
+    setMessages,
+    chatId
+  } = props;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasAutoFocused = useRef(false);
 
@@ -69,9 +79,11 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
     const newMessage = {
       id: messageId,
       content: input,
-      userId: user?.id || socket?.id, // Use user ID if available, fallback to socket ID
+      userId: user?.id || socket?.id || "", // Use user ID if available, fallback to socket ID
       userName: user?.name || user?.email || "You",
-      createdAt: timestamp,
+      type: MessageType.TEXT,
+      timestamp: Date.now(),
+      status: MessageStatus.SENT,
     };
 
     setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -82,7 +94,16 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
     if (!isMobile()) {
       textareaRef.current?.focus();
     }
-  }, [chatId, resetHeight, setInput, input, setMessages, emitMessage, user]);
+  }, [
+    chatId,
+    resetHeight,
+    setInput,
+    input,
+    messages,
+    setMessages,
+    emitMessage,
+    user,
+  ]);
 
   return (
     <div className={cn("relative flex w-full flex-col gap-4", className)}>
