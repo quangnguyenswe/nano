@@ -1,4 +1,4 @@
-import { createStore, get, set } from "idb-keyval";
+import { createStore, get, set, del } from "idb-keyval";
 
 import type { ChatMessage } from "@/types/message";
 
@@ -14,7 +14,12 @@ export interface MessagePersistenceAdapter {
    * Save messages to storage.
    */
   saveMessages: (chatRoomId: string, messages: ChatMessage[]) => Promise<void>;
-};
+
+  /**
+   * Clear messages from storage.
+   */
+  clearMessages: (chatRoomId: string) => Promise<void>;
+}
 
 // storage name gonna be "huddle_idb_messages" + chatRoomId
 export class IndexedDBAdapter {
@@ -52,6 +57,15 @@ export class IndexedDBAdapter {
       await set(chatRoomId, messages, IndexedDBAdapter.store);
     } catch (error) {
       console.warn("Failed to save messages to IndexedDB:", error);
+      throw error;
+    }
+  }
+
+  static async clearMessages(chatRoomId: string): Promise<void> {
+    try {
+      await del(chatRoomId, IndexedDBAdapter.store);
+    } catch (error) {
+      console.warn("Failed to clear messages from IndexedDB:", error);
       throw error;
     }
   }

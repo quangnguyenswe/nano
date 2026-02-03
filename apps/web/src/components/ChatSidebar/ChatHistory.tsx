@@ -29,6 +29,8 @@ import {
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { User } from "better-auth/types";
 import dayjs from "dayjs";
+import { useMessageStorage } from "@/hooks/use-message-storage";
+import { IndexedDBAdapter } from "@/data/messageStorage";
 
 type GroupedChats = {
   today: ChatRoomMetadata[];
@@ -88,6 +90,10 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const hasEmptyChatHistory = chatHistories.length === 0;
+  const { clearMessages } = useMessageStorage({
+    messagePersistenceAdapter: IndexedDBAdapter,
+    chatId: id!,
+  });
 
   const handleDelete = () => {
     const chatToDelete = deleteId;
@@ -97,6 +103,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
     if (deleteId) {
       const response = deleteChatRoomFromLocalStorage(deleteId);
+      clearMessages();
       if (!response) {
         toast.error("Failed to delete chat");
         return;

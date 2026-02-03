@@ -54,9 +54,19 @@ export const useMessageStorage = ({
     saveMessages();
   }, [messages.length]);
 
+  const clearMessages = useCallback(async () => {
+    try {
+      await messagePersistenceAdapter.clearMessages(chatId);
+      setMessages([]);
+    } catch (error) {
+      console.warn("Failed to clear messages:", error);
+    }
+  }, [messagePersistenceAdapter, chatId, setMessages]);
+
   return {
+    isLoading,
     loadMessages,
     saveMessages,
-    isLoading,
+    clearMessages,
   };
 };
