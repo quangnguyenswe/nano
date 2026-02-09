@@ -35,7 +35,6 @@ export function setupChatHandlers(
 
   socket.on("join-chat", async ({ chatId }) => {
     try {
-      console.log("Join chat event received for chatId:", chatId);
       const userId = socket.userId;
       const userName = socket.userName;
 
@@ -100,6 +99,7 @@ export function setupChatHandlers(
         avatarUrl,
       });
       const uniqueUserCount = roomManager.getUniqueUserCount(chatId);
+      socket.to(chatId).emit("new-user", { chatId });
       logger.info(
         `User ${userId} (${userName}) joined chat ${chatId}. Room now has ${uniqueUserCount} unique users (${room.activeConnections} connections).`,
       );
@@ -110,6 +110,29 @@ export function setupChatHandlers(
         message: "Failed to join chat",
       });
     }
+  });
+
+  // Handle chat room details shared by existing users for newly joined users
+  socket.on("chat-room-details", (data) => {
+    const chatId = roomManager.getChatroomIdForSocket(socket.id);
+    const session = roomManager.getUserSession(socket.id);
+
+    if (!chatId || !session) {
+      logger.debug(
+        `Socket ${socket.id} attempted to share room details without being in a chat room`,
+      );
+      return;
+    }
+
+    logger.info(
+      `User ${session.userId} sharing chat room details for chat ${chatId}`,
+    );
+
+    // Broadcast the room details to all other users in the room
+    socket.to(chatId).emit("chat-room-details", {
+      chatId: data.chatId,
+      details: data.details,
+    });
   });
 
   socket.on("leave-chat", () => {

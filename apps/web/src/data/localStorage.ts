@@ -27,6 +27,7 @@ export const saveRoomToChatList = (chat: ChatRoomMetadata) => {
   const chatRooms = listChatRoomsFromLocalStorage();
   chatRooms[chat.id] = {
     name: chat.name,
+    creator: chat.creator,
     createdAt: chat.createdAt,
     lastUpdated: chat.lastUpdated,
     unreadCount: chat.unreadCount,

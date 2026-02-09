@@ -1,3 +1,7 @@
+import {
+  getChatRoomFromLocalStorage,
+  saveRoomToChatList,
+} from "@/data/localStorage";
 import { authClient } from "@/lib/auth-client";
 import { createLogger } from "@/lib/logger";
 import { User } from "better-auth/types";
@@ -22,8 +26,10 @@ interface SocketContextType {
   joinChat: (chatId: string) => void;
   leaveChat: (chatId: string) => void;
   emitMessage: (chatId: string, content: string, messageId: string) => void;
+  emitChatRoomDetails: (id: string) => void;
 
   onMessageUpdate: (handler: (data: any) => void) => void;
+  onChatRoomDetailsUpdate: (handler: (data: any) => void) => void;
 }
 
 const SocketContext = createContext<SocketContextType>({
@@ -34,8 +40,10 @@ const SocketContext = createContext<SocketContextType>({
   joinChat: () => {},
   leaveChat: () => {},
   emitMessage: () => {},
+  emitChatRoomDetails: () => {},
 
   onMessageUpdate: () => {},
+  onChatRoomDetailsUpdate: () => {},
 });
 
 export const useSocket = () => useContext(SocketContext);
@@ -46,7 +54,11 @@ interface SocketProviderProps {
   chatId?: string;
 }
 
-export function SocketProvider({ children, user, chatId: urlChatflowId }: SocketProviderProps) {
+export function SocketProvider({
+  children,
+  user,
+  chatId: urlChatflowId,
+}: SocketProviderProps) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -57,6 +69,7 @@ export function SocketProvider({ children, user, chatId: urlChatflowId }: Socket
 
   const eventHandlers = useRef<{
     messageUpdate?: (data: any) => void;
+    chatRoomDetailsUpdate?: (data: any) => void;
   }>({});
 
   const generateSocketToken = useCallback(async (): Promise<string> => {
@@ -198,6 +211,31 @@ export function SocketProvider({ children, user, chatId: urlChatflowId }: Socket
       socketInstance.on("new-message", (data) => {
         eventHandlers.current.messageUpdate?.(data);
       });
+      socketInstance.on("chat-room-details", (data) => {
+        logger.info("Received chat room details:", data);
+        if (data.details && data.chatId === urlChatflowId) {
+          //!TODO: Check if local storage already has the chat room details to avoid overwriting
+          console.log("Received chat room details:", data);
+          saveRoomToChatList({
+            id: data.chatId,
+            name: data.details.name,
+            creator: data.details.creator,
+            createdAt: data.details.createdAt,
+            lastUpdated: data.details.lastUpdated,
+            unreadCount: data.details.unreadCount || 0,
+          });
+        }
+      });
+      socketInstance.on("new-user", (data) => {
+        // Existing user shares local room details with the newly joined user
+        const chatDetails = getChatRoomFromLocalStorage(data.chatId);
+        if (!chatDetails) return;
+        logger.info("Broadcasting chat room details to new user:", { data });
+        socketInstance.emit("chat-room-details", {
+          chatId: data.chatId,
+          details: chatDetails,
+        });
+      });
       setSocket(socketInstance);
 
       return () => {
@@ -336,9 +374,29 @@ export function SocketProvider({ children, user, chatId: urlChatflowId }: Socket
     [socket, currentChatflowId],
   );
 
+  const emitChatRoomDetails = useCallback(
+    (id: string) => {
+      if (!socket || !id) {
+        return;
+      }
+      socket.emit("chat-room-details", {
+        chatId: id,
+        details: getChatRoomFromLocalStorage(id),
+      });
+    },
+    [socket],
+  );
+
   const onMessageUpdate = useCallback((handler: (data: any) => void) => {
     eventHandlers.current.messageUpdate = handler;
   }, []);
+
+  const onChatRoomDetailsUpdate = useCallback(
+    (handler: (data: any) => void) => {
+      eventHandlers.current.chatRoomDetailsUpdate = handler;
+    },
+    [],
+  );
 
   return (
     <SocketContext.Provider
@@ -350,8 +408,9 @@ export function SocketProvider({ children, user, chatId: urlChatflowId }: Socket
         joinChat: joinChat,
         leaveChat: leaveChat,
         emitMessage: emitMessage,
-
+        emitChatRoomDetails: emitChatRoomDetails,
         onMessageUpdate,
+        onChatRoomDetailsUpdate,
       }}
     >
       {children}

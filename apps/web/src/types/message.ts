@@ -29,6 +29,7 @@ const ChatRoomMetadataSchema = z.object({
   id: z.string(),
   name: z.string(),
   createdAt: z.number(),
+  creator: z.string(),
   members: ChatMemberSchema.optional(),
   lastUpdated: z.number(),
   unreadCount: z.number().optional(),

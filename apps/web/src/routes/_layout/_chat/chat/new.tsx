@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/form";
 import { saveRoomToChatList } from "@/data/localStorage";
 import { nanoid } from "nanoid";
+import useAuth from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/_layout/_chat/chat/new")({
   component: RouteComponent,
@@ -29,6 +30,7 @@ const newChatFormSchema = z.object({
 });
 
 function RouteComponent() {
+  const { user } = useAuth();
   const form = useForm<z.infer<typeof newChatFormSchema>>({
     resolver: zodResolver(newChatFormSchema),
     defaultValues: {
@@ -41,6 +43,7 @@ function RouteComponent() {
     saveRoomToChatList({
       id: chatId,
       name: values.name,
+      creator: user?.id || "unknown",
       createdAt: Date.now(),
       lastUpdated: Date.now(),
       unreadCount: 0,
