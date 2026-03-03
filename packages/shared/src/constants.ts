@@ -1,4 +1,6 @@
-
+export const ENCRYPTION_KEY_BITS = 128;
+export const IV_LENGTH_BYTES = 12; // 96 bits for AES-GCM
+export const CHAT_ROOM_ID_BYTES = 16; // 128 bits for UUIDv4
 
 export enum WS_EVENTS {
   // SOCKET EVENTS
