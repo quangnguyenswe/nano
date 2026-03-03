@@ -131,4 +131,4 @@
 - Socket handlers: [apps/api/src/socket/handlers/](apps/api/src/socket/handlers/)
 - Frontend router: [apps/web/src/routes/](apps/web/src/routes/)
 - UI components: [apps/web/src/components/ui/](apps/web/src/components/ui/)
-- Shared types: [packages/common/src/](packages/common/src/)
+- Shared types: [packages/shared/src/](packages/shared/src/)

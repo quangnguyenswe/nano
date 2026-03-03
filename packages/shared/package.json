@@ -1,5 +1,5 @@
 {
-  "name": "@huddle/common",
+  "name": "@huddle/shared",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
