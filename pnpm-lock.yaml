@@ -23,9 +23,15 @@ importers:
       '@hono/node-server':
         specifier: ^1.19.6
         version: 1.19.7(hono@4.11.3)
+      '@hono/zod-validator':
+        specifier: ^0.7.6
+        version: 0.7.6(hono@4.11.3)(zod@4.2.1)
       '@huddle/email':
         specifier: workspace:*
         version: link:../../packages/email
+      '@huddle/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       bcrypt:
         specifier: ^6.0.0
         version: 6.0.0
@@ -41,6 +47,9 @@ importers:
       hono:
         specifier: ^4.11.3
         version: 4.11.3
+      nanoid:
+        specifier: ^5.1.6
+        version: 5.1.6
       pg:
         specifier: ^8.16.3
         version: 8.16.3
@@ -50,6 +59,9 @@ importers:
       winston:
         specifier: ^3.19.0
         version: 3.19.0
+      zod:
+        specifier: ^4.2.1
+        version: 4.2.1
     devDependencies:
       '@types/bcrypt':
         specifier: ^6.0.0
@@ -233,12 +245,6 @@ importers:
         specifier: ^5.1.4
         version: 5.4.17
 
-  packages/common:
-    devDependencies:
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
-
   packages/email:
     dependencies:
       '@react-email/components':
@@ -290,6 +296,12 @@ importers:
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.0(eslint@8.57.1)
+
+  packages/shared:
+    devDependencies:
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
   packages/typescript-config: {}
 
@@ -2185,6 +2197,16 @@ packages:
       hono: ^4
     dependencies:
       hono: 4.11.3
+    dev: false
+
+  /@hono/zod-validator@0.7.6(hono@4.11.3)(zod@4.2.1):
+    resolution: {integrity: sha512-Io1B6d011Gj1KknV4rXYz4le5+5EubcWEU/speUjuw9XMMIaP3n78yXLhjd2A3PXaXaUwEAluOiAyLqhBEJgsw==}
+    peerDependencies:
+      hono: '>=3.9.0'
+      zod: ^3.25.0 || ^4.0.0
+    dependencies:
+      hono: 4.11.3
+      zod: 4.2.1
     dev: false
 
   /@hookform/resolvers@5.2.2(react-hook-form@7.69.0):
