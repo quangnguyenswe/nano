@@ -34,6 +34,7 @@
     "cmdk": "^1.1.1",
     "dayjs": "^1.11.19",
     "fast-deep-equal": "^3.1.3",
+    "hono": "^4.11.3",
     "idb-keyval": "^6.2.2",
     "jotai": "^2.17.0",
     "jotai-scope": "^0.10.0",
@@ -54,6 +55,7 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
+    "@huddle/api": "workspace:*",
     "@huddle/eslint-config": "workspace:*",
     "@huddle/typescript-config": "workspace:*",
     "@tailwindcss/typography": "^0.5.19",
