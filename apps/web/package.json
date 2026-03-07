@@ -55,9 +55,9 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
-    "@huddle/api": "workspace:*",
-    "@huddle/eslint-config": "workspace:*",
-    "@huddle/typescript-config": "workspace:*",
+    "@nano/api": "workspace:*",
+    "@nano/eslint-config": "workspace:*",
+    "@nano/typescript-config": "workspace:*",
     "@tailwindcss/typography": "^0.5.19",
     "@tanstack/router-plugin": "^1.143.6",
     "@types/js-cookie": "^3.0.6",

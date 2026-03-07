@@ -17,9 +17,9 @@ This Turborepo includes the following packages and apps:
 ### Apps and Packages
 
 - `web`: react [vite](https://vitejs.dev) ts app
-- `@huddle/ui`: a stub component library shared by `web` application
-- `@huddle/eslint-config`: shared `eslint` configurations
-- `@huddle/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- `@nano/ui`: a stub component library shared by `web` application
+- `@nano/eslint-config`: shared `eslint` configurations
+- `@nano/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
 Each package and app is 100% [TypeScript](https://www.typescriptlang.org/).
 

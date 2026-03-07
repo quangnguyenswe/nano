@@ -1,4 +1,4 @@
-// import { generateEncryptionKey, generateRoomId } from "@huddle/shared";
+// import { generateEncryptionKey, generateRoomId } from "@nano/shared";
 
 export const generateChatRoomId = async (): Promise<string> => {
   // const roomId = await generateRoomId();

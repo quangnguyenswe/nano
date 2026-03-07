@@ -1,5 +1,5 @@
 {
-  "name": "@huddle/api",
+  "name": "@nano/api",
   "type": "module",
   "types": "./src/index.ts",
   "exports": {
@@ -20,8 +20,8 @@
   "dependencies": {
     "@hono/node-server": "^1.19.6",
     "@hono/zod-validator": "^0.7.6",
-    "@huddle/email": "workspace:*",
-    "@huddle/shared": "workspace:*",
+    "@nano/email": "workspace:*",
+    "@nano/shared": "workspace:*",
     "bcrypt": "^6.0.0",
     "better-auth": "^1.4.9",
     "dotenv": "^17.2.3",

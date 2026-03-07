@@ -21,7 +21,7 @@ export interface MessagePersistenceAdapter {
   clearMessages: (chatRoomId: string) => Promise<void>;
 }
 
-// storage name gonna be "huddle_idb_messages" + chatRoomId
+// storage name gonna be "nano_idb_messages" + chatRoomId
 export class IndexedDBAdapter {
   private static idb_name = STORAGE_KEYS.IDB_MESSAGES;
 

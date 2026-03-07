@@ -19,7 +19,7 @@ export default function SiteLogo(props: SiteLogoProps) {
       <div className="bg-teal-500 text-primary-foreground flex size-8 items-center justify-center rounded-md">
         <MessagesSquare className="size-5" />
       </div>
-      <span className="text-xl font-semibold font-mono">Huddle</span>
+      <span className="text-xl font-semibold font-mono">Nano</span>
     </Link>
   );
 }

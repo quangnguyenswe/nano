@@ -1,5 +1,5 @@
 {
-  "name": "@huddle/email",
+  "name": "@nano/email",
   "version": "1.0.0",
   "private": true,
   "exports": {

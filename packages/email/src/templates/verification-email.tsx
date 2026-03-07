@@ -27,7 +27,7 @@ const VerificationEmail = ({
   <Html>
     <Head />
     <Body style={main}>
-      <Preview>Huddle email verification</Preview>
+      <Preview>Nano email verification</Preview>
       <Container style={container}>
         <Heading style={heading}>Verify Your Email</Heading>
         <Section style={body}>
@@ -44,7 +44,7 @@ const VerificationEmail = ({
           </Text>
           <Text style={paragraph}>This link will expire in 1 hour.</Text>
           <Hr />
-          <Text style={footerParagraph}>Best regards, Huddle Team</Text>
+          <Text style={footerParagraph}>Best regards, Nano Team</Text>
         </Section>
       </Container>
     </Body>

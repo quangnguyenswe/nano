@@ -1,6 +1,6 @@
 /// <reference types="vite/types/importMeta.d.ts" />
 
-import type { ApiRoutes } from "@huddle/api";
+import type { ApiRoutes } from "@nano/api";
 import { hc } from "hono/client";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
@@ -24,4 +24,4 @@ export const client = hc<ApiRoutes>(API_URL, {
       throw error;
     });
   },
-});
+}).api;

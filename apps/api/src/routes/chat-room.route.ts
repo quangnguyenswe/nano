@@ -4,11 +4,9 @@ import { Context } from "../shared/context";
 import { CreateChatRoomSchema } from "../dtos/chat-room";
 import { createChatRoom } from "../controllers/chat-room.controller";
 
-const chatRoom = new Hono<Context>();
-
-chatRoom.post(
+const chatRoom = new Hono<Context>().post(
   "/create",
-   zValidator("json", CreateChatRoomSchema),
+  zValidator("json", CreateChatRoomSchema),
   async (c) => {
     const createChatRoomDto = c.req.valid("json");
     const userId = c.get("userId");

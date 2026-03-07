@@ -17,9 +17,8 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { saveRoomToChatList } from "@/data/localStorage";
-import { nanoid } from "nanoid";
 import useAuth from "@/hooks/use-auth";
+import { client } from "@/api/api";
 
 export const Route = createFileRoute("/_layout/_chat/chat/new")({
   component: RouteComponent,
@@ -38,17 +37,15 @@ function RouteComponent() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof newChatFormSchema>) {
-    const chatId = nanoid(); // Change this with encrypted key later
-    saveRoomToChatList({
-      id: chatId,
-      name: values.name,
-      creator: user?.id || "unknown",
-      createdAt: Date.now(),
-      lastUpdated: Date.now(),
-      unreadCount: 0,
+  async function onSubmit(values: z.infer<typeof newChatFormSchema>) {
+    const response = await client["chat-room"].create.$post({
+      json: {
+        name: values.name,
+        type: "group",
+        avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(values.name)}&background=random`,
+      },
     });
-    window.history.pushState({}, "", `/chat/${chatId}`);
+    
   }
 
   return (

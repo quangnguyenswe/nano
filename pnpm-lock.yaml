@@ -26,10 +26,10 @@ importers:
       '@hono/zod-validator':
         specifier: ^0.7.6
         version: 0.7.6(hono@4.11.3)(zod@4.2.1)
-      '@huddle/email':
+      '@nano/email':
         specifier: workspace:*
         version: link:../../packages/email
-      '@huddle/shared':
+      '@nano/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       bcrypt:
@@ -211,13 +211,13 @@ importers:
         specifier: ^5.0.9
         version: 5.0.9(@types/react@19.1.0)(react@18.3.1)
     devDependencies:
-      '@huddle/api':
+      '@nano/api':
         specifier: workspace:*
         version: link:../api
-      '@huddle/eslint-config':
+      '@nano/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@huddle/typescript-config':
+      '@nano/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@tailwindcss/typography':

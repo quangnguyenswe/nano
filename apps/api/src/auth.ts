@@ -3,7 +3,7 @@ import { logger } from "./logger";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "./db";
 import bcrypt from "bcrypt";
-import { sendVerificationEmail } from "@huddle/email";
+import { sendVerificationEmail } from "@nano/email";
 import { oneTimeToken } from "better-auth/plugins";
 
 const API_URL = process.env.API_URL || "http://localhost:5000";

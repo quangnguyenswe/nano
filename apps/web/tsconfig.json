@@ -1,5 +1,5 @@
 {
-  "extends": "@huddle/typescript-config/vite.json",
+  "extends": "@nano/typescript-config/vite.json",
   "include": ["src/**/*"],
   "compilerOptions": {
     "module": "ESNext",
