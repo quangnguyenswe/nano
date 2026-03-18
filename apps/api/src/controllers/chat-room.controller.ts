@@ -5,6 +5,7 @@ import { chatRoom, roomMember } from "../db/schema";
 
 export const createChatRoom = async (userId: string, data: CreateChatRoomDto) => {
   const roomId = await generateChatRoomId();
+  
   const [createdChatRoom] = await db
     .insert(chatRoom)
     .values({

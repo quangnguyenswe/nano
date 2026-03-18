@@ -2,9 +2,12 @@
   "name": "@nano/shared",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
+  "types": "./src/index.ts",
   "main": "./src/index.ts",
   "exports": {
     ".": {
+      "types": "./src/index.ts",
       "default": "./src/index.ts"
     }
   },

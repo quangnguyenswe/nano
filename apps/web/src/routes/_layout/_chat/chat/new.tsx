@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/form";
 import useAuth from "@/hooks/use-auth";
 import { client } from "@/api/api";
+import { httpPost } from "@/api/http";
 
 export const Route = createFileRoute("/_layout/_chat/chat/new")({
   component: RouteComponent,
@@ -38,14 +39,29 @@ function RouteComponent() {
   });
 
   async function onSubmit(values: z.infer<typeof newChatFormSchema>) {
-    const response = await client["chat-room"].create.$post({
-      json: {
-        name: values.name,
-        type: "group",
-        avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(values.name)}&background=random`,
-      },
+    // const response = await client["chat-room"].create.$post({
+    //   json: {
+    //     name: values.name,
+    //     type: "group",
+    //     avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(values.name)}&background=random`,
+    //   },
+    // });
+    const response = await httpPost("/chat-room/create", {
+      name: values.name,
+      type: "group",
+      avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(values.name)}&background=random`,
     });
-    
+
+    console.log(response);
+
+    // if (response.response) {
+      
+    //   // TODO Redirect to the new chat room page
+    //   console.log("Chat room created:", chatRoom);
+    // } else {
+    //   const errorData = await response.json();
+    //   console.error("Failed to create chat room:", errorData);
+    // }
   }
 
   return (

@@ -3,10 +3,11 @@
 import type { ApiRoutes } from "@nano/api";
 import { hc } from "hono/client";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
-const API_URL = BASE_URL.endWith("/api") ? BASE_URL : `${BASE_URL}/api`;
+const BASE_URL: string = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const API_URL: string = BASE_URL.endsWith("/api") ? BASE_URL : `${BASE_URL}/api`;
+console.log(API_URL)
 
-export const client = hc<ApiRoutes>(API_URL, {
+export const client = hc<ApiRoutes>(BASE_URL, {
   fetch: (input: RequestInfo | URL, init?: RequestInit) => {
     return fetch(input, {
       ...init,
