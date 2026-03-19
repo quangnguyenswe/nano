@@ -11,8 +11,8 @@ const chatRoom = new Hono<Context>().post(
     const createChatRoomDto = c.req.valid("json");
     const userId = c.get("userId");
 
-    await createChatRoom(userId, createChatRoomDto);
-    return c.json({ message: "Chat room created successfully" }, 201);
+    const chatRoom = await createChatRoom(userId, createChatRoomDto);
+    return c.json(chatRoom, 201);
   },
 );
 

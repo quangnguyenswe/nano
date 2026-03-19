@@ -18,8 +18,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import useAuth from "@/hooks/use-auth";
-import { client } from "@/api/api";
 import { httpPost } from "@/api/http";
+import { toast } from "sonner";
+import { createLogger } from "@/lib/logger";
 
 export const Route = createFileRoute("/_layout/_chat/chat/new")({
   component: RouteComponent,
@@ -31,6 +32,7 @@ const newChatFormSchema = z.object({
 
 function RouteComponent() {
   const { user } = useAuth();
+  const logger = createLogger("NewChatRoute");
   const form = useForm<z.infer<typeof newChatFormSchema>>({
     resolver: zodResolver(newChatFormSchema),
     defaultValues: {
@@ -39,29 +41,19 @@ function RouteComponent() {
   });
 
   async function onSubmit(values: z.infer<typeof newChatFormSchema>) {
-    // const response = await client["chat-room"].create.$post({
-    //   json: {
-    //     name: values.name,
-    //     type: "group",
-    //     avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(values.name)}&background=random`,
-    //   },
-    // });
-    const response = await httpPost("/chat-room/create", {
+    const { response, error } = await httpPost("/chat-room/create", {
       name: values.name,
       type: "group",
       avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(values.name)}&background=random`,
     });
 
-    console.log(response);
-
-    // if (response.response) {
-      
-    //   // TODO Redirect to the new chat room page
-    //   console.log("Chat room created:", chatRoom);
-    // } else {
-    //   const errorData = await response.json();
-    //   console.error("Failed to create chat room:", errorData);
-    // }
+    if (error || !response) {
+      toast.error("Failed to create chat room. Please try again.");
+      logger.error("Error creating chat room", { error });
+      return;
+    }
+    toast.success("Chat room created successfully!");
+    window.history.pushState({}, "", `/chat/${response.id}`);
   }
 
   return (
