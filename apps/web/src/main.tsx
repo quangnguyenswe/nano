@@ -10,6 +10,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import AuthProvider from "./providers/auth";
 import useAuth from "./hooks/use-auth";
 import LoadingPage from "./components/LoadingPage";
+import { ThemeProvider } from "./components/theme-provider";
+import { UI_THEME_KEY } from "./constants";
 
 // Create a new router instance
 const router = createRouter({
@@ -20,9 +22,7 @@ const router = createRouter({
     user: null,
     queryClient,
   },
-  defaultPendingComponent: () => (
-    <LoadingPage initialMessage="Loading..." />
-  ),
+  defaultPendingComponent: () => <LoadingPage initialMessage="Loading..." />,
 });
 
 // Register the router instance for type safety
@@ -35,7 +35,11 @@ declare module "@tanstack/react-router" {
 function App() {
   const { user } = useAuth();
 
-  return <RouterProvider router={router} context={{ user }} />;
+  return (
+    <ThemeProvider defaultTheme="dark" storageKey={UI_THEME_KEY}>
+      <RouterProvider router={router} context={{ user }} />
+    </ThemeProvider>
+  );
 }
 
 const rootElement = document.getElementById("root") as HTMLElement;

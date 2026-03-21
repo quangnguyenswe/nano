@@ -54,7 +54,7 @@ export default function Navigation() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="md:hidden shadow-md cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
+                  className="md:hidden shadow-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
                   <MenuIcon className="size-6" />
                 </Button>

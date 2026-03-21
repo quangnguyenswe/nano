@@ -1,20 +1,25 @@
-import { ChevronsUpDown } from "lucide-react";
+import { ChevronsUpDown, Monitor, Moon, Sun } from "lucide-react";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  SidebarMenu,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
+import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
 import { User } from "better-auth/types";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { queryClient } from "@/lib/query-client";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import useSignOut from "@/hooks/use-signout";
+import { useTheme } from "../theme-provider";
 
 type SidebarUserProps = {
   user: User;
@@ -23,6 +28,7 @@ type SidebarUserProps = {
 export function SidebarUser(props: SidebarUserProps) {
   const { user } = props;
   const { mutateAsync: signOut } = useSignOut();
+  const { theme, setTheme } = useTheme();
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -67,6 +73,37 @@ export function SidebarUser(props: SidebarUserProps) {
             data-testid="user-nav-menu"
             side="top"
           >
+            <DropdownMenuGroup>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuCheckboxItem
+                      checked={theme === "light"}
+                      onClick={() => setTheme("light")}
+                    >
+                      <Sun />
+                      Light
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem
+                      checked={theme === "dark"}
+                      onClick={() => setTheme("dark")}
+                    >
+                      <Moon />
+                      Dark
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem
+                      checked={theme === "system"}
+                      onClick={() => setTheme("system")}
+                    >
+                      <Monitor />
+                      System
+                    </DropdownMenuCheckboxItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
             <DropdownMenuItem asChild data-testid="user-nav-item-auth">
               <button
                 className="w-full cursor-pointer"
