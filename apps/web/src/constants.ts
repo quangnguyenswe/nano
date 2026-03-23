@@ -5,3 +5,10 @@ export const STORAGE_KEYS = {
 } as const;
 
 export const UI_THEME_KEY = "nano_ui_theme";
+
+export const PANEL_WIDTH = {
+  DEFAULT: 320,
+  MIN: 290,
+  /** Maximum is 30% of viewport, enforced dynamically */
+  MAX_PERCENTAGE: 0.3,
+} as const

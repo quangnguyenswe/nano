@@ -8,7 +8,6 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarRail,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   AlertDialog,
@@ -39,7 +38,6 @@ type ChatSidebarProps = {
 
 export function ChatSidebar(props: ChatSidebarProps) {
   const { user } = props;
-  const { setOpenMobile } = useSidebar();
 
   const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false);
 
