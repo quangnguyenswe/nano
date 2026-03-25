@@ -15,3 +15,9 @@ export const CreateChatRoomSchema = z.object({
 });
 
 export type CreateChatRoomDto = z.infer<typeof CreateChatRoomSchema>;
+
+export const ChatRoomHistoryQuerySchema = z.object({
+  limit: z.string().optional(),
+  startingAfter: z.string().optional(),
+  endingBefore: z.string().optional(),
+});

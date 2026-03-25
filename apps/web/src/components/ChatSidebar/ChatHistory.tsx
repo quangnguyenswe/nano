@@ -1,8 +1,6 @@
-"use client";
+import { motion } from "framer-motion";
 
-// import { motion } from "framer-motion";
-
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -32,27 +30,29 @@ import { User } from "better-auth/types";
 import dayjs from "dayjs";
 import { useMessageStorage } from "@/hooks/use-message-storage";
 import { IndexedDBAdapter } from "@/data/messageStorage";
+import { ChatHistory, ChatRoom } from "@/types/chat-room";
+import useSWRInfinite from "swr/infinite";
+import { httpGet } from "@/api/http";
+import { LoaderIcon } from "lucide-react";
 
 type GroupedChats = {
-  today: ChatRoomMetadata[];
-  yesterday: ChatRoomMetadata[];
-  lastWeek: ChatRoomMetadata[];
-  lastMonth: ChatRoomMetadata[];
-  older: ChatRoomMetadata[];
+  today: ChatRoom[];
+  yesterday: ChatRoom[];
+  lastWeek: ChatRoom[];
+  lastMonth: ChatRoom[];
+  older: ChatRoom[];
 };
 
-export type ChatHistory = {
-  chats: ChatRoomMetadata[];
-};
+const PAGE_SIZE = 20;
 
-const groupChatsByDate = (chats: ChatRoomMetadata[]): GroupedChats => {
+const groupChatsByDate = (chats: ChatRoom[]): GroupedChats => {
   const now = new Date();
   const oneWeekAgo = dayjs(now).subtract(1, "week").toDate();
   const oneMonthAgo = dayjs(now).subtract(1, "month").toDate();
 
   return chats.reduce(
     (groups, chat) => {
-      const chatDate = new Date(chat.createdAt);
+      const chatDate = new Date(chat.lastMessageAt);
 
       if (dayjs(chatDate).isSame(now, "day")) {
         groups.today.push(chat);
@@ -80,21 +80,69 @@ const groupChatsByDate = (chats: ChatRoomMetadata[]): GroupedChats => {
   );
 };
 
+export const getChatHistoryPaginationKey = (
+  pageIndex: number,
+
+  previousPageData: ChatHistory | null,
+) => {
+  if (previousPageData && previousPageData.hasMore === false) {
+    return null;
+  }
+
+  if (pageIndex === 0) {
+    return `/chat-room/history?limit=${PAGE_SIZE}`;
+  }
+
+  const firstChatFromPage = previousPageData?.chats.at(-1);
+
+  if (!firstChatFromPage) {
+    return null;
+  }
+
+  return `/chat-room/history?limit=${PAGE_SIZE}&endingBefore=${firstChatFromPage.id}`;
+};
+
+export const fetcher = async (url: string): Promise<ChatHistory> => {
+  const { response, error } = await httpGet(url);
+  if (error || !response) {
+    throw new Error(error?.message || "Failed to fetch chat history");
+  }
+  return response as ChatHistory;
+};
+
 export function SidebarHistory({ user }: { user: User | undefined }) {
   const { setOpenMobile } = useSidebar();
   const params = useParams({ strict: false });
   const id = params ? params.chatId : null;
-  const chatHistories = getChatRooms();
 
   const navigate = useNavigate();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const hasEmptyChatHistory = chatHistories.length === 0;
+  const {
+    data: paginatedChatHistories,
+    setSize,
+    isValidating,
+    isLoading,
+    mutate,
+  } = useSWRInfinite<ChatHistory>(
+    user ? getChatHistoryPaginationKey : () => null,
+    fetcher,
+    { fallbackData: [], revalidateOnFocus: false },
+  );
+
   const { clearMessages } = useMessageStorage({
     messagePersistenceAdapter: IndexedDBAdapter,
     chatId: id!,
   });
+
+  const hasReachedEnd = paginatedChatHistories
+    ? paginatedChatHistories.some((page) => page.hasMore === false)
+    : false;
+
+  const hasEmptyChatHistory = paginatedChatHistories
+    ? paginatedChatHistories.every((page) => page.chats.length === 0)
+    : false;
 
   const handleDelete = () => {
     const chatToDelete = deleteId;
@@ -128,34 +176,34 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     );
   }
 
-  // if (isLoading) {
-  //   return (
-  //     <SidebarGroup>
-  //       <div className="px-2 py-1 text-sidebar-foreground/50 text-xs">
-  //         Today
-  //       </div>
-  //       <SidebarGroupContent>
-  //         <div className="flex flex-col">
-  //           {[44, 32, 28, 64, 52].map((item) => (
-  //             <div
-  //               className="flex h-8 items-center gap-2 rounded-md px-2"
-  //               key={item}
-  //             >
-  //               <div
-  //                 className="h-4 max-w-(--skeleton-width) flex-1 rounded-md bg-sidebar-accent-foreground/10"
-  //                 style={
-  //                   {
-  //                     "--skeleton-width": `${item}%`,
-  //                   } as React.CSSProperties
-  //                 }
-  //               />
-  //             </div>
-  //           ))}
-  //         </div>
-  //       </SidebarGroupContent>
-  //     </SidebarGroup>
-  //   );
-  // }
+  if (isLoading) {
+    return (
+      <SidebarGroup>
+        <div className="px-2 py-1 text-sidebar-foreground/50 text-xs">
+          Today
+        </div>
+        <SidebarGroupContent>
+          <div className="flex flex-col">
+            {[44, 32, 28, 64, 52].map((item) => (
+              <div
+                className="flex h-8 items-center gap-2 rounded-md px-2"
+                key={item}
+              >
+                <div
+                  className="h-4 max-w-(--skeleton-width) flex-1 rounded-md bg-sidebar-accent-foreground/10"
+                  style={
+                    {
+                      "--skeleton-width": `${item}%`,
+                    } as React.CSSProperties
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        </SidebarGroupContent>
+      </SidebarGroup>
+    );
+  }
 
   if (hasEmptyChatHistory) {
     return (
@@ -177,9 +225,12 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       <SidebarGroup>
         <SidebarGroupContent>
           <SidebarMenu>
-            {chatHistories &&
+            {paginatedChatHistories &&
               (() => {
-                const groupedChats = groupChatsByDate(chatHistories);
+                const chatsFromHistory = paginatedChatHistories.flatMap(
+                  (paginatedChatHistory) => paginatedChatHistory.chats,
+                );
+                const groupedChats = groupChatsByDate(chatsFromHistory);
 
                 return (
                   <div className="flex flex-col gap-6">
@@ -287,9 +338,22 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
               })()}
           </SidebarMenu>
 
-          <div className="mt-8 flex w-full flex-row items-center justify-center gap-2 px-2 text-sm text-zinc-500">
-            You have reached the end of your chat history.
-          </div>
+          <motion.div
+            onViewportEnter={() => {
+              if (!isValidating && !hasReachedEnd) {
+                setSize((size) => size + 1);
+              }
+            }}
+          />
+
+          {hasReachedEnd ? null : (
+            <div className="mt-1 flex flex-row items-center gap-2 px-4 py-2 text-sidebar-foreground/50">
+              <div className="animate-spin">
+                <LoaderIcon />
+              </div>
+              <div className="text-[11px]">Loading...</div>
+            </div>
+          )}
         </SidebarGroupContent>
       </SidebarGroup>
 

@@ -16,6 +16,7 @@ import { ChatRoomMetadata } from "@/types/message";
 import { Link } from "@tanstack/react-router";
 import { MoreHorizontal, Share, Trash } from "lucide-react";
 import { cn } from "@/lib/classname";
+import { ChatHistory, ChatRoom } from "@/types/chat-room";
 
 const PureChatItem = ({
   chat,
@@ -23,7 +24,7 @@ const PureChatItem = ({
   onDelete,
   setOpenMobile,
 }: {
-  chat: ChatRoomMetadata;
+  chat: ChatRoom;
   isActive: boolean;
   onDelete: (chatId: string) => void;
   setOpenMobile: (open: boolean) => void;
