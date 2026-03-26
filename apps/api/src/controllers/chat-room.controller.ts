@@ -2,10 +2,9 @@ import { CreateChatRoomDto } from "../dtos/chat-room";
 import { generateChatRoomId } from "../lib/utils";
 import { db } from "../db";
 import { chatRoom, roomMember } from "../db/schema";
-import { eq, SQL, desc, and, gt } from "drizzle-orm";
+import { eq, SQL, desc, and, gt, count } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
 import { logger } from "../logger";
-import { id } from "zod/v4/locales";
 
 export const createChatRoom = async (
   userId: string,
@@ -116,4 +115,68 @@ export const getUserChatRooms = async (
       cause: error,
     });
   }
+};
+
+export const deleteChatRoom = async (userId: string, roomId: string) => {
+  // Check if the user is the owner of the chat room
+  const [membership] = await db
+    .select()
+    .from(roomMember)
+    .where(
+      and(
+        eq(roomMember.roomId, roomId),
+        eq(roomMember.userId, userId),
+        eq(roomMember.role, "owner"),
+      ),
+    )
+    .limit(1);
+
+  if (!membership) {
+    throw new HTTPException(403, {
+      message: "You do not have permission to delete this chat room",
+    });
+  }
+
+  // Delete the chat room and its memberships
+  // Note: Since we use cascading deletes in the database, deleting the chat room will automatically delete related memberships and messages
+  await db.delete(chatRoom).where(eq(chatRoom.id, roomId));
+
+  return { message: "Chat room deleted successfully" };
+};
+
+export const leaveChatRoom = async (userId: string, roomId: string) => {
+  // Check if the user is a member of the chat room or not
+  const [membership] = await db
+    .select()
+    .from(roomMember)
+    .where(and(eq(roomMember.roomId, roomId), eq(roomMember.userId, userId)))
+    .limit(1);
+
+  if (!membership) {
+    throw new HTTPException(403, {
+      message: "You are not a member of this chat room",
+    });
+  }
+
+  // If user is the only owner, prevent leaving the room without deleting it
+  if (membership.role === "owner") {
+    const ownerCount = await db
+      .select({ count: count() })
+      .from(roomMember)
+      .where(and(eq(roomMember.roomId, roomId), eq(roomMember.role, "owner")));
+
+    if (ownerCount[0].count <= 1) {
+      throw new HTTPException(403, {
+        message:
+          "You cannot leave the chat room as you are the only owner. Please delete the room or assign another owner before leaving.",
+      });
+    }
+  }
+
+  // Remove the user from the chat room
+  await db
+    .delete(roomMember)
+    .where(and(eq(roomMember.roomId, roomId), eq(roomMember.userId, userId)));
+
+  return { message: "You have left the chat room successfully" };
 };

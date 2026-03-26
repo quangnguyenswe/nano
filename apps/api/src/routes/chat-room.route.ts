@@ -7,7 +7,9 @@ import {
 } from "../dtos/chat-room";
 import {
   createChatRoom,
+  deleteChatRoom,
   getUserChatRooms,
+  leaveChatRoom,
 } from "../controllers/chat-room.controller";
 
 const chatRoom = new Hono<Context>()
@@ -52,5 +54,19 @@ const chatRoom = new Hono<Context>()
 
       return c.json(chats);
     },
-  );
+  )
+  .delete("/delete/:roomId", async (c) => {
+    const userId = c.get("userId");
+    const { roomId } = c.req.param();
+
+    const response = await deleteChatRoom(userId, roomId);
+    return c.json(response);
+  })
+  .post("/leave/:roomId", async (c) => {
+    const userId = c.get("userId");
+    const { roomId } = c.req.param();
+    
+    const response = await leaveChatRoom(userId, roomId);
+    return c.json(response);
+  })
 export default chatRoom;

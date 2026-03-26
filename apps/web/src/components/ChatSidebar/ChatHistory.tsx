@@ -20,11 +20,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { ChatItem } from "./ChatItem";
-import { ChatRoomMetadata } from "@/types/message";
-import {
-  deleteChatRoomFromLocalStorage,
-  getChatRooms,
-} from "@/data/localStorage";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { User } from "better-auth/types";
 import dayjs from "dayjs";
@@ -118,6 +113,8 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
   const navigate = useNavigate();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [leaveId, setLeaveId] = useState<string | null>(null);
+  const [showLeaveDialog, setShowLeaveDialog] = useState(false);
 
   const {
     data: paginatedChatHistories,
@@ -150,18 +147,38 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
     setShowDeleteDialog(false);
 
-    if (deleteId) {
-      const response = deleteChatRoomFromLocalStorage(deleteId);
-      clearMessages();
-      if (!response) {
-        toast.error("Failed to delete chat");
-        return;
-      }
-      toast.success("Chat deleted successfully");
-    }
     if (isCurrentChat) {
       navigate({ to: "/chat/new" });
     }
+
+    mutate((chatHistories) => {
+      if (!chatHistories) return chatHistories;
+
+      return chatHistories.map((chatHistory) => ({
+        ...chatHistory,
+        chats: chatHistory.chats.filter((chat) => chat.id !== chatToDelete),
+      }));
+    });
+  };
+
+  const handleLeave = () => {
+    const chatToLeave = leaveId;
+    const isCurrentChat = chatToLeave === id;
+
+    setShowLeaveDialog(false);
+
+    if (isCurrentChat) {
+      navigate({ to: "/chat/new" });
+    }
+
+    mutate((chatHistories) => {
+      if (!chatHistories) return chatHistories;
+
+      return chatHistories.map((chatHistory) => ({
+        ...chatHistory,
+        chats: chatHistory.chats.filter((chat) => chat.id !== chatToLeave),
+      }));
+    });
   };
 
   if (!user) {
@@ -249,6 +266,10 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
+                            onLeave={(chatId: string) => {
+                              setLeaveId(chatId);
+                              setShowLeaveDialog(true);
+                            }}
                           />
                         ))}
                       </div>
@@ -267,6 +288,10 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                             onDelete={(chatId: string) => {
                               setDeleteId(chatId);
                               setShowDeleteDialog(true);
+                            }}
+                            onLeave={(chatId: string) => {
+                              setLeaveId(chatId);
+                              setShowLeaveDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
                           />
@@ -288,6 +313,10 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                               setDeleteId(chatId);
                               setShowDeleteDialog(true);
                             }}
+                            onLeave={(chatId: string) => {
+                              setLeaveId(chatId);
+                              setShowLeaveDialog(true);
+                            }}
                             setOpenMobile={setOpenMobile}
                           />
                         ))}
@@ -308,6 +337,10 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                               setDeleteId(chatId);
                               setShowDeleteDialog(true);
                             }}
+                            onLeave={(chatId: string) => {
+                              setLeaveId(chatId);
+                              setShowLeaveDialog(true);
+                            }}
                             setOpenMobile={setOpenMobile}
                           />
                         ))}
@@ -327,6 +360,10 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                             onDelete={(chatId: string) => {
                               setDeleteId(chatId);
                               setShowDeleteDialog(true);
+                            }}
+                            onLeave={(chatId: string) => {
+                              setLeaveId(chatId);
+                              setShowLeaveDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
                           />
@@ -369,6 +406,25 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete}>
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog onOpenChange={setShowLeaveDialog} open={showLeaveDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              After leaving, you will lose access to this chat and all its
+              messages. You can ask the room owner to re-add you if you change
+              your mind.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLeave}>
               Continue
             </AlertDialogAction>
           </AlertDialogFooter>

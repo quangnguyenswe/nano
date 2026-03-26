@@ -14,7 +14,7 @@ import {
 } from "../ui/sidebar";
 import { ChatRoomMetadata } from "@/types/message";
 import { Link } from "@tanstack/react-router";
-import { MoreHorizontal, Share, Trash } from "lucide-react";
+import { LogOut, MoreHorizontal, Share, Trash } from "lucide-react";
 import { cn } from "@/lib/classname";
 import { ChatHistory, ChatRoom } from "@/types/chat-room";
 
@@ -22,11 +22,13 @@ const PureChatItem = ({
   chat,
   isActive,
   onDelete,
+  onLeave,
   setOpenMobile,
 }: {
   chat: ChatRoom;
   isActive: boolean;
   onDelete: (chatId: string) => void;
+  onLeave: (chatId: string) => void;
   setOpenMobile: (open: boolean) => void;
 }) => {
   // const { visibilityType, setVisibilityType } = useChatVisibility({
@@ -67,11 +69,13 @@ const PureChatItem = ({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="center" side="bottom">
-          <DropdownMenuItem className="cursor-pointer">
-            <Share />
-            <span>Share</span>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onSelect={() => onLeave(chat.id)}
+          >
+            <LogOut />
+            <span>Leave</span>
           </DropdownMenuItem>
-
           <DropdownMenuItem
             className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
             onSelect={() => onDelete(chat.id)}
@@ -86,7 +90,10 @@ const PureChatItem = ({
 };
 
 export const ChatItem = memo(PureChatItem, (prevProps, nextProps) => {
-  if (prevProps.isActive !== nextProps.isActive) {
+  if (
+    prevProps.isActive !== nextProps.isActive ||
+    prevProps.chat.id !== nextProps.chat.id
+  ) {
     return false;
   }
   return true;
