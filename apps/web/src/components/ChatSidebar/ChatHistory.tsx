@@ -27,7 +27,7 @@ import { useMessageStorage } from "@/hooks/use-message-storage";
 import { IndexedDBAdapter } from "@/data/messageStorage";
 import { ChatHistory, ChatRoom } from "@/types/chat-room";
 import useSWRInfinite from "swr/infinite";
-import { httpGet } from "@/api/http";
+import { httpDelete, httpGet, httpPost } from "@/api/http";
 import { LoaderIcon } from "lucide-react";
 
 type GroupedChats = {
@@ -77,7 +77,6 @@ const groupChatsByDate = (chats: ChatRoom[]): GroupedChats => {
 
 export const getChatHistoryPaginationKey = (
   pageIndex: number,
-
   previousPageData: ChatHistory | null,
 ) => {
   if (previousPageData && previousPageData.hasMore === false) {
@@ -141,11 +140,22 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     ? paginatedChatHistories.every((page) => page.chats.length === 0)
     : false;
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     const chatToDelete = deleteId;
     const isCurrentChat = chatToDelete === id;
 
     setShowDeleteDialog(false);
+
+    const { response, error } = await httpDelete(
+      `/chat-room/delete/${chatToDelete}`,
+    );
+
+    if (error || !response) {
+      toast.error(error?.message || "Failed to delete chat room");
+      return;
+    }
+
+    await clearMessages();
 
     if (isCurrentChat) {
       navigate({ to: "/chat/new" });
@@ -161,11 +171,21 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     });
   };
 
-  const handleLeave = () => {
+  const handleLeave = async () => {
     const chatToLeave = leaveId;
     const isCurrentChat = chatToLeave === id;
 
     setShowLeaveDialog(false);
+
+    const { response, error } = await httpPost(
+      `/chat-room/leave/${chatToLeave}`,
+      {},
+    );
+
+    if (error || !response) {
+      toast.error(error?.message || "Failed to leave chat room");
+      return;
+    }
 
     if (isCurrentChat) {
       navigate({ to: "/chat/new" });

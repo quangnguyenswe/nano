@@ -93,7 +93,7 @@ export async function httpPost<
   ErrorType = AppError,
 >(
   url: string,
-  body: Record<string, any>,
+  body: Record<string, any> = {},
   options?: HttpOptionsType,
 ): Promise<ApiResponse<ResponseType, ErrorType>> {
   return httpCall<ResponseType, ErrorType>(url, {
