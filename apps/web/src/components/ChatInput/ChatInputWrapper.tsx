@@ -35,18 +35,6 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
   const { socket, emitMessage } = useSocket();
   const { user } = useAuth();
 
-  const adjustHeight = useCallback(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "44px";
-    }
-  }, []);
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      adjustHeight();
-    }
-  }, [adjustHeight]);
-
   useEffect(() => {
     if (!hasAutoFocused.current) {
       const timer = setTimeout(() => {
@@ -60,7 +48,7 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
 
   const resetHeight = useCallback(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = "44px";
+      textareaRef.current.style.height = "30px";
     }
   }, []);
 
@@ -69,9 +57,6 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
   };
 
   const submitForm = useCallback(() => {
-    // Update the URL to include the chat ID without reloading the page
-    window.history.pushState({}, "", `/chat/${chatId}`);
-
     const messageId = nanoid();
     const timestamp = new Date().toISOString();
 
@@ -159,7 +144,7 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
             ))}
           </div>
         )} */}
-        <div className="flex flex-row items-center gap-1 sm:gap-2">
+        <div className="flex flex-row items-end gap-1 sm:gap-2">
           <ChatInputTextarea
             className="grow resize-none border-0! border-none! bg-transparent p-1 text-base outline-none! ring-0! [-ms-overflow-style:none] [scrollbar-width:none] placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 [&::-webkit-scrollbar]:hidden"
             data-testid="chat-input-textarea"
