@@ -1,13 +1,22 @@
 import { cn } from "@/lib/classname";
-import React, { useCallback, useEffect, useRef } from "react";
-import { ChatInput, ChatInputTextarea } from "../Elements/chat-input";
-import { Send } from "lucide-react";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
+import {
+  ChatInput,
+  ChatInputTextarea,
+} from "../Elements/chat-input";
+import { ImageIcon, Paperclip, Send } from "lucide-react";
 import { Button } from "../ui/button";
 import { isMobile } from "@/lib/mobile";
 import useAuth from "@/hooks/use-auth";
 import { useSocket } from "@/providers/socket";
 import { nanoid } from "nanoid";
 import { ChatMessage, MessageStatus, MessageType } from "@/types/message";
+import { toast } from "sonner";
+import ChatInputUtils from "./ChatInputUtils";
 
 type ChatInputWrapperProps = {
   className?: string;
@@ -21,19 +30,16 @@ type ChatInputWrapperProps = {
 };
 
 export default function ChatInputWrapper(props: ChatInputWrapperProps) {
-  const {
-    className,
-    input,
-    setInput,
-    messages,
-    setMessages,
-    chatId
-  } = props;
+  const { className, input, setInput, messages, setMessages, chatId } = props;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasAutoFocused = useRef(false);
 
   const { socket, emitMessage } = useSocket();
   const { user } = useAuth();
+
+  // const fileInputRef = useRef<HTMLInputElement>(null);
+  // const [uploadQueue, setUploadQueue] = useState<string[]>([]);
+  // const [attachments, setAttachments] = useState<{ url: string; name: string; contentType: string }[]>([]);
 
   useEffect(() => {
     if (!hasAutoFocused.current) {
@@ -48,7 +54,7 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
 
   const resetHeight = useCallback(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = "30px";
+      textareaRef.current.style.height = "34px";
     }
   }, []);
 
@@ -90,6 +96,60 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
     user,
   ]);
 
+  // const uploadFile = useCallback(async (file: File) => {
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+
+  //   try {
+  //     const response = await fetch("/api/upload", {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       const { url, pathname, contentType } = data;
+
+  //       return {
+  //         url,
+  //         name: pathname,
+  //         contentType,
+  //       };
+  //     }
+  //     const { error } = await response.json();
+  //     toast.error(error);
+  //     return;
+  //   } catch (_error) {
+  //     toast.error("Failed to upload file, please try again!");
+  //   }
+  // }, []);
+
+  // const handleFileChange = useCallback(
+  //   async (event: ChangeEvent<HTMLInputElement>) => {
+  //     const files = Array.from(event.target.files || []);
+
+  //     setUploadQueue(files.map((file) => file.name));
+
+  //     try {
+  //       const uploadPromises = files.map((file) => uploadFile(file));
+  //       const uploadedAttachments = await Promise.all(uploadPromises);
+  //       const successfullyUploadedAttachments = uploadedAttachments.filter(
+  //         (attachment) => attachment !== undefined
+  //       );
+
+  //       setAttachments((currentAttachments) => [
+  //         ...currentAttachments,
+  //         ...successfullyUploadedAttachments,
+  //       ]);
+  //     } catch (_error) {
+  //       toast.error("Failed to upload files");
+  //     } finally {
+  //       setUploadQueue([]);
+  //     }
+  //   },
+  //   [setAttachments, uploadFile]
+  // );
+
   return (
     <div className={cn("relative flex w-full flex-col gap-4", className)}>
       {/* <input
@@ -100,9 +160,8 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
         tabIndex={-1}
         type="file"
       /> */}
-
       <ChatInput
-        className="rounded-xl border border-border bg-background p-1 shadow-xs transition-all duration-200 focus-within:border-border hover:border-muted-foreground/50"
+        className="bg-background shadow-xs flex items-end w-full flex-row transition-all duration-200 focus-within:border-border hover:border-muted-foreground/50"
         onSubmit={(_, e) => {
           e.preventDefault();
           if (input.trim().length === 0) {
@@ -111,7 +170,11 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
           submitForm();
         }}
       >
-        {/* {(attachments.length > 0 || uploadQueue.length > 0) && (
+        <ChatInputUtils 
+          input={input}
+        />
+        <div className="flex flex-row items-end gap-1 sm:gap-2 rounded-xl grow border border-border p-1">
+          {/* {(attachments.length > 0 || uploadQueue.length > 0) && (
           <div
             className="flex flex-row items-end gap-2 overflow-x-scroll"
             data-testid="attachments-preview"
@@ -144,7 +207,6 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
             ))}
           </div>
         )} */}
-        <div className="flex flex-row items-end gap-1 sm:gap-2">
           <ChatInputTextarea
             className="grow resize-none border-0! border-none! bg-transparent p-1 text-base outline-none! ring-0! [-ms-overflow-style:none] [scrollbar-width:none] placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 [&::-webkit-scrollbar]:hidden"
             data-testid="chat-input-textarea"

@@ -64,7 +64,7 @@ export default function Chat(props: ChatProps) {
         setMessages={setMessages}
         isLoading={isLoading}
       />
-      <div className="sticky bottom-0 z-1 mx-auto flex w-full max-w-4xl gap-2 border-t-0 bg-background px-2 pb-3 md:px-4 md:pb-4 pt-1 md:pt-2">
+      <div className="sticky bottom-0 z-1 flex w-full gap-2 border-t-0 bg-background px-2 pb-3 md:pr-4 md:pb-4 pt-1 md:pt-2">
         <ChatInputWrapper
           input={input}
           setInput={setInput}

@@ -31,21 +31,6 @@ import {
 } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@/components/ui/command";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
@@ -55,13 +40,6 @@ import {
   InputGroupButton,
   InputGroupTextarea,
 } from "@/components/ui/input-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/classname";
 import React from "react";
 
@@ -420,31 +398,6 @@ export function ChatInputAttachments({
     </div>
   );
 }
-
-export type ChatInputActionAddAttachmentsProps = ComponentProps<
-  typeof DropdownMenuItem
-> & {
-  label?: string;
-};
-
-export const ChatInputActionAddAttachments = ({
-  label = "Add photos or files",
-  ...props
-}: ChatInputActionAddAttachmentsProps) => {
-  const attachments = useChatInputAttachments();
-
-  return (
-    <DropdownMenuItem
-      {...props}
-      onSelect={(e) => {
-        e.preventDefault();
-        attachments.openFileDialog();
-      }}
-    >
-      <ImageIcon className="mr-2 size-4" /> {label}
-    </DropdownMenuItem>
-  );
-};
 
 export type ChatInputMessage = {
   text: string;
@@ -1004,72 +957,6 @@ export const ChatInputButton = ({
   );
 };
 
-export type ChatInputActionMenuProps = ComponentProps<typeof DropdownMenu>;
-export const ChatInputActionMenu = (props: ChatInputActionMenuProps) => (
-  <DropdownMenu {...props} />
-);
-
-export type ChatInputActionMenuTriggerProps = ChatInputButtonProps;
-
-export const ChatInputActionMenuTrigger = ({
-  className,
-  children,
-  ...props
-}: ChatInputActionMenuTriggerProps) => (
-  <DropdownMenuTrigger asChild>
-    <ChatInputButton className={className} {...props}>
-      {children ?? <PlusIcon className="size-4" />}
-    </ChatInputButton>
-  </DropdownMenuTrigger>
-);
-
-export type ChatInputActionMenuContentProps = ComponentProps<
-  typeof DropdownMenuContent
->;
-export const ChatInputActionMenuContent = ({
-  className,
-  ...props
-}: ChatInputActionMenuContentProps) => (
-  <DropdownMenuContent align="start" className={cn(className)} {...props} />
-);
-
-export type ChatInputActionMenuItemProps = ComponentProps<
-  typeof DropdownMenuItem
->;
-export const ChatInputActionMenuItem = ({
-  className,
-  ...props
-}: ChatInputActionMenuItemProps) => (
-  <DropdownMenuItem className={cn(className)} {...props} />
-);
-
-// Note: Actions that perform side-effects (like opening a file dialog)
-// are provided in opt-in modules (e.g., Chat-input-attachments).
-
-export type ChatInputSubmitProps = ComponentProps<typeof InputGroupButton>;
-
-export const ChatInputSubmit = ({
-  className,
-  variant = "default",
-  size = "icon-sm",
-  children,
-  ...props
-}: ChatInputSubmitProps) => {
-  let Icon = <CornerDownLeftIcon className="size-4" />;
-
-  return (
-    <InputGroupButton
-      aria-label="Submit"
-      className={cn(className)}
-      size={size}
-      type="submit"
-      variant={variant}
-      {...props}
-    >
-      {children ?? Icon}
-    </InputGroupButton>
-  );
-};
 
 interface SpeechRecognition extends EventTarget {
   continuous: boolean;
@@ -1232,55 +1119,6 @@ export const ChatInputSpeechButton = ({
   );
 };
 
-export type ChatInputSelectProps = ComponentProps<typeof Select>;
-
-export const ChatInputSelect = (props: ChatInputSelectProps) => (
-  <Select {...props} />
-);
-
-export type ChatInputSelectTriggerProps = ComponentProps<typeof SelectTrigger>;
-
-export const ChatInputSelectTrigger = ({
-  className,
-  ...props
-}: ChatInputSelectTriggerProps) => (
-  <SelectTrigger
-    className={cn(
-      "border-none bg-transparent font-medium text-muted-foreground shadow-none transition-colors",
-      "hover:bg-accent hover:text-foreground aria-expanded:bg-accent aria-expanded:text-foreground",
-      className,
-    )}
-    {...props}
-  />
-);
-
-export type ChatInputSelectContentProps = ComponentProps<typeof SelectContent>;
-
-export const ChatInputSelectContent = ({
-  className,
-  ...props
-}: ChatInputSelectContentProps) => (
-  <SelectContent className={cn(className)} {...props} />
-);
-
-export type ChatInputSelectItemProps = ComponentProps<typeof SelectItem>;
-
-export const ChatInputSelectItem = ({
-  className,
-  ...props
-}: ChatInputSelectItemProps) => (
-  <SelectItem className={cn(className)} {...props} />
-);
-
-export type ChatInputSelectValueProps = ComponentProps<typeof SelectValue>;
-
-export const ChatInputSelectValue = ({
-  className,
-  ...props
-}: ChatInputSelectValueProps) => (
-  <SelectValue className={cn(className)} {...props} />
-);
-
 export type ChatInputHoverCardProps = ComponentProps<typeof HoverCard>;
 
 export const ChatInputHoverCard = ({
@@ -1311,116 +1149,3 @@ export const ChatInputHoverCardContent = ({
 );
 
 export type ChatInputTabsListProps = HTMLAttributes<HTMLDivElement>;
-
-export const ChatInputTabsList = ({
-  className,
-  ...props
-}: ChatInputTabsListProps) => <div className={cn(className)} {...props} />;
-
-export type ChatInputTabProps = HTMLAttributes<HTMLDivElement>;
-
-export const ChatInputTab = ({ className, ...props }: ChatInputTabProps) => (
-  <div className={cn(className)} {...props} />
-);
-
-export type ChatInputTabLabelProps = HTMLAttributes<HTMLHeadingElement>;
-
-export const ChatInputTabLabel = ({
-  className,
-  ...props
-}: ChatInputTabLabelProps) => (
-  <h3
-    className={cn(
-      "mb-2 px-3 font-medium text-muted-foreground text-xs",
-      className,
-    )}
-    {...props}
-  />
-);
-
-export type ChatInputTabBodyProps = HTMLAttributes<HTMLDivElement>;
-
-export const ChatInputTabBody = ({
-  className,
-  ...props
-}: ChatInputTabBodyProps) => (
-  <div className={cn("space-y-1", className)} {...props} />
-);
-
-export type ChatInputTabItemProps = HTMLAttributes<HTMLDivElement>;
-
-export const ChatInputTabItem = ({
-  className,
-  ...props
-}: ChatInputTabItemProps) => (
-  <div
-    className={cn(
-      "flex items-center gap-2 px-3 py-2 text-xs hover:bg-accent",
-      className,
-    )}
-    {...props}
-  />
-);
-
-export type ChatInputCommandProps = ComponentProps<typeof Command>;
-
-export const ChatInputCommand = ({
-  className,
-  ...props
-}: ChatInputCommandProps) => <Command className={cn(className)} {...props} />;
-
-export type ChatInputCommandInputProps = ComponentProps<typeof CommandInput>;
-
-export const ChatInputCommandInput = ({
-  className,
-  ...props
-}: ChatInputCommandInputProps) => (
-  <CommandInput className={cn(className)} {...props} />
-);
-
-export type ChatInputCommandListProps = ComponentProps<typeof CommandList>;
-
-export const ChatInputCommandList = ({
-  className,
-  ...props
-}: ChatInputCommandListProps) => (
-  <CommandList className={cn(className)} {...props} />
-);
-
-export type ChatInputCommandEmptyProps = ComponentProps<typeof CommandEmpty>;
-
-export const ChatInputCommandEmpty = ({
-  className,
-  ...props
-}: ChatInputCommandEmptyProps) => (
-  <CommandEmpty className={cn(className)} {...props} />
-);
-
-export type ChatInputCommandGroupProps = ComponentProps<typeof CommandGroup>;
-
-export const ChatInputCommandGroup = ({
-  className,
-  ...props
-}: ChatInputCommandGroupProps) => (
-  <CommandGroup className={cn(className)} {...props} />
-);
-
-export type ChatInputCommandItemProps = ComponentProps<typeof CommandItem>;
-
-export const ChatInputCommandItem = ({
-  className,
-  ...props
-}: ChatInputCommandItemProps) => (
-  <CommandItem className={cn(className)} {...props} />
-);
-
-export type ChatInputCommandSeparatorProps = ComponentProps<
-  typeof CommandSeparator
->;
-
-export const ChatInputCommandSeparator = ({
-  className,
-  ...props
-}: ChatInputCommandSeparatorProps) => (
-  <CommandSeparator className={cn(className)} {...props} />
-);

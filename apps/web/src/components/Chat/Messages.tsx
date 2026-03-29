@@ -61,7 +61,7 @@ export default function BaseMessages(props: MessagesProps) {
         className="absolute inset-0 touch-pan-y overflow-y-auto"
         ref={messagesContainerRef}
       >
-        <div className="mx-auto flex min-w-0 max-w-4xl flex-col gap-1 px-2 py-4 md:px-4">
+        <div className="w-full flex min-w-0 flex-col gap-1 px-2 py-4 md:px-4">
           {messages.length === 0 && <>No messages</>}
 
           {messages.map((message, index) => {
