@@ -1,13 +1,6 @@
 import { cn } from "@/lib/classname";
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
-import {
-  ChatInput,
-  ChatInputTextarea,
-} from "../Elements/chat-input";
+import React, { useCallback, useEffect, useRef } from "react";
+import { ChatInput, ChatInputTextarea } from "../Elements/chat-input";
 import { ImageIcon, Paperclip, Send } from "lucide-react";
 import { Button } from "../ui/button";
 import { isMobile } from "@/lib/mobile";
@@ -170,9 +163,7 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
           submitForm();
         }}
       >
-        <ChatInputUtils 
-          input={input}
-        />
+        <ChatInputUtils />
         <div className="flex flex-row items-end gap-1 sm:gap-2 rounded-xl grow border border-border p-1">
           {/* {(attachments.length > 0 || uploadQueue.length > 0) && (
           <div
