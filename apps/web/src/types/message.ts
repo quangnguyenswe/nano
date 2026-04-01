@@ -58,18 +58,3 @@ export const LocalStorageChatRoomSchema = z.record(
 export type LocalStorageChatRooms = z.infer<typeof LocalStorageChatRoomSchema>;
 
 export type DataURL = string & { _brand: "DataURL" };
-
-const BinaryFileDataSchema = z.object({
-  id: z.string(),
-  mimeType: z.string(),
-  dataURL: z.string(),
-  createdAt: z.number(),
-  lastRetrieved: z.number(),
-  version: z.number(),
-})
-
-export type BinaryFileData = z.infer<typeof BinaryFileDataSchema>;
-
-export type BinaryFileMetadata = Omit<BinaryFileData, "dataURL">;
-
-export type BinaryFiles = Record<string, BinaryFileData>;

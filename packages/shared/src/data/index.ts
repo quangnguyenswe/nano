@@ -1,6 +1,7 @@
 import { CHAT_ROOM_ID_BYTES } from "../constants";
 import { bytesToHexString } from "../utils";
 
+export { compressData, decompressData } from "../data/encode";
 export {
   createIV,
   generateEncryptionKey,
