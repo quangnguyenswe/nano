@@ -14,7 +14,7 @@ export class FileManager {
 
   private savingFiles = new Map<ImageElement["fileId"], FileVersion>();
   private savedFiles = new Map<ImageElement["fileId"], FileVersion>();
-  private erroredFiles_save = new Map<ImageElement["fileId"], true>();
+  private erroredFiles_save = new Map<ImageElement["fileId"], FileVersion>();
 
   private _getFiles;
   private _saveFiles;
@@ -30,8 +30,8 @@ export class FileManager {
       erroredFiles: Map<FileId, true>;
     }>;
     saveFiles: (data: { addedFiles: Map<FileId, BinaryFileData> }) => Promise<{
-      savedFiles: FileId[];
-      erroredFiles: Map<FileId, true>;
+      savedFiles: Map<FileId, BinaryFileData>;
+      erroredFiles: Map<FileId, BinaryFileData>;
     }>;
     onFileStatusChange?: (
       updates: Array<[FileId, "loading" | "loaded" | "error"]>,
@@ -65,29 +65,34 @@ export class FileManager {
   };
 
   //TODO: Check back this function
-  saveFiles = async (files: BinaryFiles[]) => {
-    const addedFiles = new Map<FileId, BinaryFileData>();
+  saveFiles = async ({ files }: { files: BinaryFiles }) => {
+    const addedFiles: Map<FileId, BinaryFileData> = new Map();
 
-    files.forEach((fileGroup) => {
-      Object.values(fileGroup).forEach((file) => {
-        if (!this.isFileSavedOrBeingSaved(file)) {
-          addedFiles.set(file.id, file);
-          this.savingFiles.set(file.id, this.getFileVersion(file));
-        }
-      });
-    });
+    // for (const element of elements) {
+    //   const fileData =
+    //     isInitializedImageElement(element) && files[element.fileId];
+
+    //   if (
+    //     fileData &&
+    //     // NOTE if errored during save, won't retry due to this check
+    //     !this.isFileSavedOrBeingSaved(fileData)
+    //   ) {
+    //     addedFiles.set(element.fileId, files[element.fileId]);
+    //     this.savingFiles.set(element.fileId, this.getFileVersion(fileData));
+    //   }
+    // }
 
     try {
       const { savedFiles, erroredFiles } = await this._saveFiles({
         addedFiles,
       });
 
-      for (const fileId of savedFiles) {
-        this.savedFiles.set(fileId, this.savingFiles.get(fileId)!);
+      for (const [fileId, fileData] of savedFiles) {
+        this.savedFiles.set(fileId, this.getFileVersion(fileData));
       }
 
-      for (const fileId of erroredFiles.keys()) {
-        this.erroredFiles_save.set(fileId, true);
+      for (const [fileId, fileData] of erroredFiles) {
+        this.erroredFiles_save.set(fileId, this.getFileVersion(fileData));
       }
 
       return {

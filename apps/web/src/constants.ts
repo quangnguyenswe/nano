@@ -2,7 +2,12 @@
 export const STORAGE_KEYS = {
   LOCAL_STORAGE_CHATS: "nano_local_storage_chat",
   IDB_MESSAGES: "nano_idb_messages",
+
+  VERSION_DATA_STATE: "version-dataState",
+  VERSION_FILES: "version-files",
 } as const;
+
+export const SAVE_TO_LOCAL_STORAGE_TIMEOUT = 300;
 
 export const UI_THEME_KEY = "nano_ui_theme";
 
