@@ -47,7 +47,7 @@ export function SidebarUser(props: SidebarUserProps) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              className="h-10 bg-transparent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer text-accent-foreground hover:bg-accent/50 hover:text-accent-foreground shadow-none"
+              className="h-14 w-full bg-transparent data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer text-accent-foreground hover:bg-accent/50 hover:text-accent-foreground shadow-none rounded-none"
               // data-testid="user-nav-button"
             >
               <Avatar className="h-8 w-8 rounded-full cursor-pointer bg-white">

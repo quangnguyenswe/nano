@@ -31,6 +31,7 @@ import SiteLogo from "../SiteLogo";
 import { useNavigate } from "@tanstack/react-router";
 import { SidebarHistory } from "./ChatHistory";
 import { deleteAllChatRoomsFromLocalStorage } from "@/data/localStorage";
+import SearchInput from "../SearchInput";
 
 type ChatSidebarProps = {
   user: User | undefined | null;
@@ -58,7 +59,7 @@ export function ChatSidebar(props: ChatSidebarProps) {
         <SidebarHeader>
           <SidebarMenu>
             <div className="flex flex-row items-center justify-between">
-              <SiteLogo />
+              <h2 className="text-primary font-bold">Chats</h2>
               <div className="flex flex-row gap-1">
                 {user && (
                   <Tooltip>
@@ -99,9 +100,10 @@ export function ChatSidebar(props: ChatSidebarProps) {
           </SidebarMenu>
         </SidebarHeader>
         <SidebarContent>
+          <SearchInput />
           <SidebarHistory user={user!} />
         </SidebarContent>
-        <SidebarFooter>{user && <SidebarUser user={user} />}</SidebarFooter>
+        <SidebarFooter className="p-0">{user && <SidebarUser user={user} />}</SidebarFooter>
         <SidebarRail />
       </Sidebar>
 

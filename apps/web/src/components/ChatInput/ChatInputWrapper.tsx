@@ -154,7 +154,7 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
         type="file"
       /> */}
       <ChatInput
-        className="bg-background shadow-xs flex items-end w-full flex-row transition-all duration-200 focus-within:border-border hover:border-muted-foreground/50"
+        className="bg-background flex items-end w-full flex-row transition-all duration-200 focus-within:border-border hover:border-muted-foreground/50"
         onSubmit={(_, e) => {
           e.preventDefault();
           if (input.trim().length === 0) {
