@@ -19,7 +19,7 @@ import {
   SidebarMenu,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { ChatItem } from "./ChatItem";
+import { ChatHistoryItem } from "./ChatHistoryItem";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { User } from "better-auth/types";
 import dayjs from "dayjs";
@@ -238,7 +238,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                     {chatsFromHistory.length > 0 && (
                       <div>
                         {chatsFromHistory.map((chat) => (
-                          <ChatItem
+                          <ChatHistoryItem
                             chat={chat}
                             isActive={chat.id === id}
                             key={chat.id}

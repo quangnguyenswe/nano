@@ -19,8 +19,9 @@ import { cn } from "@/lib/classname";
 import { ChatHistory, ChatRoom } from "@/types/chat-room";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
+import { formatLastMessage } from "@/lib/date";
 
-const PureChatItem = ({
+const PureChatHistoryItem = ({
   chat,
   isActive,
   onDelete,
@@ -51,15 +52,15 @@ const PureChatItem = ({
             isActive && "bg-muted!",
           )}
         >
-          <Avatar className="size-10 border border-border">
-            {/* <AvatarImage src={image} alt={chat.name} className="object-contain" /> */}
-            <AvatarFallback>{chat.name[0]}</AvatarFallback>
+          <Avatar className="size-10 border border-border bg-border">
+            <AvatarImage src={chat.avatarUrl} alt={chat.name} className="object-contain" />
+            <AvatarFallback className="bg-background">{chat.name[0]}</AvatarFallback>
           </Avatar>
           <div className="min-w-0 grow flex flex-col gap-2">
             <div className="flex items-center justify-between pr-2">
               <span className="truncate text-sm font-medium">{chat.name}</span>
               <span className="text-muted-foreground flex-none text-xs">
-                10m ago
+                {formatLastMessage(chat.lastMessageAt)}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -109,7 +110,7 @@ const PureChatItem = ({
   );
 };
 
-export const ChatItem = memo(PureChatItem, (prevProps, nextProps) => {
+export const ChatHistoryItem = memo(PureChatHistoryItem, (prevProps, nextProps) => {
   if (
     prevProps.isActive !== nextProps.isActive ||
     prevProps.chat.id !== nextProps.chat.id

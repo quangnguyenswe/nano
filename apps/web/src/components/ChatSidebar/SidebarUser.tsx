@@ -69,9 +69,10 @@ export function SidebarUser(props: SidebarUserProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-popper-anchor-width)"
+            className="w-50"
             data-testid="user-nav-menu"
             side="top"
+            align="end"
           >
             <DropdownMenuGroup>
               <DropdownMenuSub>

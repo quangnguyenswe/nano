@@ -75,3 +75,31 @@ export function getCurrentPeriod() {
     return "evening";
   }
 }
+
+// 10m, 2h, yesterday, 3d, 2w, 4mo, 1y
+export function formatLastMessage(date: Date): string {
+  const datetime = dayjs(date);
+  const now = dayjs();
+  const diffInMinutes = now.diff(datetime, "minute");
+  const diffInHours = now.diff(datetime, "hour");
+  const diffInDays = now.diff(datetime, "day");
+  const diffInWeeks = now.diff(datetime, "week");
+  const diffInMonths = now.diff(datetime, "month");
+  const diffInYears = now.diff(datetime, "year");
+
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes}m`;
+  } else if (diffInHours < 24) {
+    return `${diffInHours}h`;
+  } else if (diffInDays === 1) {
+    return `yesterday`;
+  } else if (diffInDays < 7) {
+    return `${diffInDays}d`;
+  } else if (diffInWeeks < 4) {
+    return `${diffInWeeks}w`;
+  } else if (diffInMonths < 12) {
+    return `${diffInMonths}mo`;
+  } else {
+    return `${diffInYears}y`;
+  }
+}
