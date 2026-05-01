@@ -6,10 +6,10 @@ import { HTTPException } from "hono/http-exception";
 import apiRouter from "./routes";
 import "dotenv/config";
 import { auth } from "./auth";
-import { Session, User } from "better-auth/types";
 import { Context } from "./shared/context";
 import { initializeSockets } from "./socket";
 import type { Server as HTTPServer } from "node:http";
+import { redisClient } from "./services/redis";
 
 export const isProd = process.env.NODE_ENV === "production";
 const corsOrigins = process.env.CORS_ORIGINS?.split(",");
@@ -86,7 +86,23 @@ app.onError((err, c) => {
   );
 });
 
+async function initializeServices() {
+  try {
+    // Test Redis connection
+    const isRedisHealthy = await redisClient.isHealthy();
+    if (!isRedisHealthy) {
+      console.warn("⚠️  Redis connection failed, but server will continue");
+    } else {
+      console.log("✅ Redis connected successfully");
+    }
+  } catch (error) {
+    console.error("❌ Redis initialization error:", error);
+  }
+}
+
 async function startServer() {
+  await initializeServices();
+
   return serve(
     {
       fetch: app.fetch,

@@ -5,6 +5,7 @@ import { db } from "./db";
 import bcrypt from "bcrypt";
 import { sendVerificationEmail } from "@nano/email";
 import { oneTimeToken } from "better-auth/plugins";
+import { redisClient } from "./services/redis";
 
 const API_URL = process.env.API_URL || "http://localhost:5000";
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
@@ -95,8 +96,20 @@ export const auth = betterAuth({
   session: {
     cookieCache: {
       enabled: true,
-      maxAge: 5 * 60,
+      maxAge: 5 * 60, // 5 minutes (short-lived cookie)
+      refreshCache: false, // Enable stateless refresh
     },
+  },
+  secondaryStorage: {
+    get: async (key) => await redisClient.getKey(key),
+    set: async (key, value, ttl) => await redisClient.setKey(key, value, ttl),
+    delete: async (key) => {
+      await redisClient.deleteKey(key);
+    },
+  },
+  account: {
+    storeStateStrategy: "cookie",
+    storeAccountCookie: true, // Store account data after OAuth flow in a cookie (useful for database-less flows)
   },
   advanced: {
     defaultCookieAttributes: {
