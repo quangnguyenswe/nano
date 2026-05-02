@@ -1,3 +1,4 @@
+import Hero from "@/components/home/Hero";
 import Navigation from "@/components/Navigation/Navigation";
 import { getLatestChatRoom } from "@/data/localStorage";
 import { createFileRoute, redirect } from "@tanstack/react-router";
@@ -27,7 +28,26 @@ function Index() {
   return (
     <>
       <Navigation />
-      <h3>Welcome Home!</h3>
+      <main className="flex flex-1 flex-col">
+        <div className="mx-auto h-full w-full max-w-350 border-dashed min-[1400px]:border-x min-[1800px]:max-w-384">
+          <Hero />
+          <div className="flex flex-col gap-2xl md:gap-5xl">
+            <section className="mx-auto px-4 sm:px-10">
+              <div className="flex items-center justify-center">
+                <figure>
+                  <div className="overflow-hidden border-surface-low bg-surface-lowest p-md">
+                    <img
+                      src="https://excalidraw.nyc3.cdn.digitaloceanspaces.com/lp-cms/media/HP_hero_Excalidraw_editor_playground.png"
+                      alt="Hero Image"
+                      className="h-auto w-full object-cover object-center"
+                    />
+                  </div>
+                </figure>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
     </>
   );
 }

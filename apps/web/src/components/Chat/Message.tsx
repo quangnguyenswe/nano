@@ -102,7 +102,7 @@ const BasePreviewMessage = (props: PreviewMessageProps) => {
             <div>
               <MessageContent
                 className={cn("px-3 py-1.5 wrap-break-word w-fit rounded-lg", {
-                  "bg-teal-500 text-right text-white": mine,
+                  "bg-brand text-right text-white": mine,
                   "bg-slate-200 text-left": !mine,
                 })}
                 data-testid="message-content"

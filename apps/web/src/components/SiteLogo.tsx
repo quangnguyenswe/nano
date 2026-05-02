@@ -1,6 +1,6 @@
 import { cn } from "@/lib/classname";
 import { Link } from "@tanstack/react-router";
-import { MessagesSquare } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 
 type SiteLogoProps = {
   className?: string;
@@ -16,10 +16,10 @@ export default function SiteLogo(props: SiteLogoProps) {
         className,
       )}
     >
-      <div className="bg-teal-500 text-primary-foreground flex size-8 items-center justify-center rounded-md">
-        <MessagesSquare className="size-5" />
+      <div className="bg-brand text-primary-foreground flex size-8 items-center justify-center rounded-md">
+        <MessageCircle className="size-5 text-white" />
       </div>
-      <span className="text-xl font-semibold font-mono">Nano</span>
+      <span className="text-xl font-semibold font-mono">nano</span>
     </Link>
   );
 }
