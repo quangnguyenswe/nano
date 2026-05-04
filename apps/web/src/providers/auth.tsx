@@ -1,9 +1,7 @@
 import { createContext, type PropsWithChildren } from "react";
-import { authClient } from "@/lib/auth-client";
 import { User } from "better-auth/types";
 import LoadingPage from "@/components/LoadingPage";
-
-const { useSession } = authClient;
+import { useSessionQuery } from "@/hooks/use-auth";
 
 export const AuthContext = createContext<{
   user: User | null | undefined;
@@ -14,10 +12,10 @@ export const AuthContext = createContext<{
 });
 
 function AuthProvider({ children }: PropsWithChildren) {
-  const { data, isPending } = useSession();
+  const { data, isPending } = useSessionQuery()
 
   if (isPending) {
-    return <LoadingPage initialMessage="Loading..." />;
+    return <LoadingPage initialMessage="Loading" />;
   }
 
   return (

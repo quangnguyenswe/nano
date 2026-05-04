@@ -22,7 +22,7 @@ const router = createRouter({
     user: null,
     queryClient,
   },
-  defaultPendingComponent: () => <LoadingPage initialMessage="Loading..." />,
+  defaultPendingComponent: () => <LoadingPage initialMessage="Loading" />,
 });
 
 // Register the router instance for type safety
