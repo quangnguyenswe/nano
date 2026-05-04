@@ -15,9 +15,9 @@ export default function ChatInputUtils(props: ChatInputUtilsProps) {
   return (
     <div className="m-1 flex items-center gap-1">
       <DropdownMenu>
-        <DropdownMenuTrigger>
+        <DropdownMenuTrigger asChild>
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <Button
                 type="button"
                 variant="ghost"
