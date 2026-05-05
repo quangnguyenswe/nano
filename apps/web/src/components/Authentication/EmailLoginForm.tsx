@@ -11,9 +11,11 @@ import { useForm } from "react-hook-form";
 import { Input } from "../ui/input";
 import { Field, FieldDescription } from "../ui/field";
 import { Button } from "../ui/button";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 const emailLoginFormSchema = z.object({
   email: z.email(),
@@ -22,7 +24,7 @@ const emailLoginFormSchema = z.object({
 
 type EmailLoginFormProps = {
   isDisabled?: boolean;
-  setIsDisabled?: (disabled: boolean) => void;
+  setIsDisabled: (disabled: boolean) => void;
 };
 
 export default function EmailLoginForm(props: EmailLoginFormProps) {
@@ -36,9 +38,30 @@ export default function EmailLoginForm(props: EmailLoginFormProps) {
       password: "",
     },
   });
+  const navigate = useNavigate();
 
-  function onSubmit(values: z.infer<typeof emailLoginFormSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof emailLoginFormSchema>) {
+    setIsLoading(true);
+    setIsDisabled(true);
+    try {
+      const result = await authClient.signIn.email({
+        email: values.email,
+        password: values.password,
+      });
+
+      if (result.error) {
+        toast.error(result.error.message || "Failed to sign in");
+        return;
+      }
+
+      toast.success("Logged in successfully");
+      navigate({ to: "/chat/new"});
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to sign in");
+    } finally {
+      setIsLoading(false);
+      setIsDisabled(false);
+    }
   }
 
   return (

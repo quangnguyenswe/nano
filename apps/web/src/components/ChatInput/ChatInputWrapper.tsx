@@ -1,14 +1,13 @@
 import { cn } from "@/lib/classname";
 import React, { useCallback, useEffect, useRef } from "react";
 import { ChatInput, ChatInputTextarea } from "../Elements/chat-input";
-import { ImageIcon, Paperclip, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { Button } from "../ui/button";
 import { isMobile } from "@/lib/mobile";
 import useAuth from "@/hooks/use-auth";
 import { useSocket } from "@/providers/socket";
 import { nanoid } from "nanoid";
 import { ChatMessage, MessageStatus, MessageType } from "@/types/message";
-import { toast } from "sonner";
 import ChatInputUtils from "./ChatInputUtils";
 
 type ChatInputWrapperProps = {
@@ -47,7 +46,7 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
 
   const resetHeight = useCallback(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = "34px";
+      textareaRef.current.style.height = "auto";
     }
   }, []);
 
@@ -164,7 +163,7 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
         }}
       >
         <ChatInputUtils />
-        <div className="flex flex-row items-end gap-1 sm:gap-2 rounded-xl grow border border-border p-1">
+        <div className="flex flex-row items-center gap-1 sm:gap-2 rounded-xl grow border border-border p-1">
           {/* {(attachments.length > 0 || uploadQueue.length > 0) && (
           <div
             className="flex flex-row items-end gap-2 overflow-x-scroll"
@@ -207,14 +206,16 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
             rows={1}
             value={input}
           />
-          <Button
-            type="submit"
-            variant="ghost"
-            className="rounded-full size-8 hover:bg-accent"
-          >
-            <span className="sr-only">Send message</span>
-            <Send className="h-5 w-5 text-muted-foreground hover:text-foreground" />
-          </Button>
+          <div className="flex self-end">
+            <Button
+              type="submit"
+              variant="ghost"
+              className="rounded-full size-8 hover:bg-accent"
+            >
+              <span className="sr-only">Send message</span>
+              <Send className="h-5 w-5 text-muted-foreground hover:text-foreground" />
+            </Button>
+          </div>
         </div>
       </ChatInput>
     </div>

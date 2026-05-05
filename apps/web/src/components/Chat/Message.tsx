@@ -63,6 +63,7 @@ const BasePreviewMessage = (props: PreviewMessageProps) => {
           {showAvatar && (
             <Avatar className="h-7 w-7 rounded-full bg-background ring-1 ring-border">
               <AvatarImage
+                className="bg-white"
                 src={"/images/default-avatar.png"}
                 alt={message.userName || "User"}
               />
@@ -103,7 +104,7 @@ const BasePreviewMessage = (props: PreviewMessageProps) => {
               <MessageContent
                 className={cn("px-3 py-1.5 wrap-break-word w-fit rounded-lg", {
                   "bg-brand text-right text-white": mine,
-                  "bg-slate-200 text-left": !mine,
+                  "bg-muted dark:bg-muted-foreground text-left": !mine,
                 })}
                 data-testid="message-content"
               >
