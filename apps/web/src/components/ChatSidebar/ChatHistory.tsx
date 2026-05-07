@@ -22,21 +22,12 @@ import {
 import { ChatHistoryItem } from "./ChatHistoryItem";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { User } from "better-auth/types";
-import dayjs from "dayjs";
 import { useMessageStorage } from "@/hooks/use-message-storage";
 import { IndexedDBAdapter } from "@/data/messageStorage";
-import { ChatHistory, ChatRoom } from "@/types/chat-room";
+import { ChatHistory } from "@/types/chat-room";
 import useSWRInfinite from "swr/infinite";
 import { httpDelete, httpGet, httpPost } from "@/api/http";
 import { LoaderIcon } from "lucide-react";
-
-type GroupedChats = {
-  today: ChatRoom[];
-  yesterday: ChatRoom[];
-  lastWeek: ChatRoom[];
-  lastMonth: ChatRoom[];
-  older: ChatRoom[];
-};
 
 const PAGE_SIZE = 20;
 

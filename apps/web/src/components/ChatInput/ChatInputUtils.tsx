@@ -9,16 +9,19 @@ import {
 } from "../ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
-type ChatInputUtilsProps = {};
+type ChatInputUtilsProps = {
+  disabled?: boolean;
+};
 export default function ChatInputUtils(props: ChatInputUtilsProps) {
-  const {} = props;
+  const { disabled } = props;
   return (
     <div className="m-1 flex items-center gap-1">
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger asChild={disabled}>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
+                disabled={disabled}
                 type="button"
                 variant="ghost"
                 className={cn("rounded-full size-9 hover:bg-accent p-1")}

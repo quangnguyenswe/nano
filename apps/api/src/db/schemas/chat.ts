@@ -4,25 +4,18 @@ import {
   timestamp,
   uuid,
   boolean,
-  pgEnum,
   index,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { user } from "./auth";
 
-export const roomTypeEnum = pgEnum("room_type", ["direct", "group"]);
-
-export const memberRoleEnum = pgEnum("member_role", [
-  "owner",
-  "admin",
-  "member",
-]);
 
 export const chatRoom = pgTable("chat_room", {
   id: text("id").primaryKey().notNull(),
   name: text("name"),
-  type: roomTypeEnum("type").notNull().default("group"),
+  type: text("type").notNull().default("group"), // 'group' or 'direct'
+  visibility: text("visibility").notNull().default("private"), // 'private' or 'public'
   avatarUrl: text("avatar_url"),
   createdBy: text("created_by")
     .notNull()
@@ -50,7 +43,8 @@ export const roomMember = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    role: memberRoleEnum("role").notNull().default("member"),
+    role: text("role").notNull().default("member"),// 'owner', 'admin', 'member'
+    status: text("status").notNull().default("joined"),// 'joined', 'invited', 'requested'
     nickname: text("nickname"),
     isMuted: boolean("is_muted").notNull().default(false),
     lastReadAt: timestamp("last_read_at", { withTimezone: true }),

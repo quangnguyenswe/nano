@@ -19,10 +19,11 @@ type ChatInputWrapperProps = {
     messages: ChatMessage[] | ((msgs: ChatMessage[]) => ChatMessage[]),
   ) => void;
   chatId: string;
+  disabled?: boolean;
 };
 
 export default function ChatInputWrapper(props: ChatInputWrapperProps) {
-  const { className, input, setInput, messages, setMessages, chatId } = props;
+  const { className, input, setInput, messages, setMessages, chatId, disabled } = props;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasAutoFocused = useRef(false);
 
@@ -55,6 +56,9 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
   };
 
   const submitForm = useCallback(() => {
+    if (input.trim().length === 0 || disabled) {
+      return;
+    }
     const messageId = nanoid();
     const timestamp = new Date().toISOString();
 
@@ -162,7 +166,7 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
           submitForm();
         }}
       >
-        <ChatInputUtils />
+        <ChatInputUtils disabled={disabled} />
         <div className="flex flex-row items-center gap-1 sm:gap-2 rounded-xl grow border border-border p-1">
           {/* {(attachments.length > 0 || uploadQueue.length > 0) && (
           <div
@@ -204,12 +208,14 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
             placeholder="Send a message..."
             ref={textareaRef}
             rows={1}
+            disabled={disabled}
             value={input}
           />
           <div className="flex self-end">
             <Button
               type="submit"
               variant="ghost"
+              disabled={input.trim().length === 0 || disabled}
               className="rounded-full size-8 hover:bg-accent"
             >
               <span className="sr-only">Send message</span>

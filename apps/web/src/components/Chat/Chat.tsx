@@ -10,6 +10,19 @@ import {
 import { IndexedDBAdapter } from "@/data/messageStorage";
 import { saveRoomToChatList } from "@/data/localStorage";
 import { useSocket } from "@/providers/socket";
+import { httpGet, httpPost } from "@/api/http";
+import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "../ui/empty";
+import { Button } from "../ui/button";
+import { Skeleton } from "../ui/skeleton";
 
 interface ChatProps {
   id: string;
@@ -23,6 +36,9 @@ export default function Chat(props: ChatProps) {
     messagePersistenceAdapter: IndexedDBAdapter,
     chatId: id,
   });
+  const [hasAccessPermission, setHasAccessPermission] = useState(false);
+  const [memberShip, setMembership] = useState<string>("guest");
+  const navigate = useNavigate();
   // const { socket, onChatRoomDetailsUpdate, emitChatRoomDetails } = useSocket();
 
   // useEffect(() => {
@@ -56,19 +72,109 @@ export default function Chat(props: ChatProps) {
   //   };
   // }, [socket, setMessages, id]);
 
+  // Check if user has access to the chat room, if not open a dialog to request access
+  const checkAccessibility = async () => {
+    if (!id) {
+      return;
+    }
+    const { response, error } = await httpGet<{
+      status: string;
+    }>(`/chat-room/status/${id}`);
+    if (error || !response) {
+      toast.error(error?.message || "Failed to check chat room access");
+      return;
+    }
+    setMembership(response.status);
+    if (response.status === "guest") {
+      setHasAccessPermission(false);
+      toast.error("You do not have access to this chat room");
+    } else {
+      setHasAccessPermission(true);
+    }
+  };
+
+  const handleRequestAccess = async () => {
+    const { response, error } = await httpPost(
+      `/chat-room/request-access/${id}`,
+    );
+    if (error || !response) {
+      toast.error(error?.message || "Failed to request access");
+      return;
+    }
+
+    toast.success("Access request sent successfully");
+  };
+
+  useEffect(() => {
+    checkAccessibility();
+  }, [id]);
+
   return (
     <>
-      <Messages
-        chatId={id}
-        messages={messages}
-        setMessages={setMessages}
-        isLoading={isLoading}
-      />
+      {memberShip === "joined" ? (
+        <Messages
+          chatId={id}
+          messages={messages}
+          setMessages={setMessages}
+          isLoading={isLoading}
+        />
+      ) : memberShip === "guest" ? (
+        <div className="relative flex-1 flex items-center justify-center">
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia>
+                <img
+                  className="w-40 md:w-52"
+                  alt=""
+                  src="/illustrates/invite-only.svg"
+                />
+              </EmptyMedia>
+              <EmptyTitle>Access Denied</EmptyTitle>
+              <EmptyDescription>
+                It looks like you don't have permission to access this chat
+                room. Please request access from the chat room owner.
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent className="flex-row justify-center gap-2">
+              <Button size="sm" onClick={handleRequestAccess}>
+                Request
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => navigate({ to: "/chat/new" })}
+              >
+                Back to Chats
+              </Button>
+            </EmptyContent>
+          </Empty>
+        </div>
+      ) : (
+        <div className="relative flex-1 flex items-center justify-center">
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia>
+                <img
+                  className="w-40 md:w-52"
+                  alt=""
+                  src="/illustrates/pending-request.svg"
+                />
+              </EmptyMedia>
+              <EmptyTitle>Pending Approval</EmptyTitle>
+              <EmptyDescription>
+                Your request to access this chat room is pending approval from
+                the owner.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        </div>
+      )}
       <div className="sticky bottom-0 z-1 flex w-full gap-2 border-t-0 bg-background px-2 pb-3 md:pr-4 md:pb-4 pt-1 md:pt-2">
         <ChatInputWrapper
           input={input}
           setInput={setInput}
           messages={messages}
+          disabled={memberShip !== "joined"}
           setMessages={setMessages}
           chatId={id}
         />

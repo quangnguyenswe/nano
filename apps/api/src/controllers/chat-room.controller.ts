@@ -58,8 +58,9 @@ export const getUserChatRooms = async (
         .innerJoin(roomMember, eq(chatRoom.id, roomMember.roomId))
         .where(
           whereCondition
-            ? and(whereCondition, eq(roomMember.userId, userId))
-            : eq(roomMember.userId, userId),
+            ? and(whereCondition, eq(roomMember.userId, userId), eq(roomMember.status, "joined"))
+            : and(eq(roomMember.userId, userId), eq(roomMember.status, "joined"))
+          ,
         )
         .orderBy(desc(chatRoom.lastMessageAt))
         .limit(extendedLimit);
@@ -179,4 +180,65 @@ export const leaveChatRoom = async (userId: string, roomId: string) => {
     .where(and(eq(roomMember.roomId, roomId), eq(roomMember.userId, userId)));
 
   return { message: "You have left the chat room successfully" };
+};
+
+export const getMemberStatus = async (userId: string, roomId: string) => {
+  const [membership] = await db
+    .select({
+      status: roomMember.status,
+    })
+    .from(roomMember)
+    .where(and(eq(roomMember.roomId, roomId), eq(roomMember.userId, userId)))
+    .limit(1);
+
+  if (!membership) {
+    return {
+      status: "guest",
+    };
+  }
+
+  return membership.status;
+};
+
+export const sendChatRoomAccessRequest = async (
+  userId: string,
+  roomId: string,
+) => {
+  // Check if the user has already sent a request or is already a member
+  const [existingMembership] = await db
+    .select({
+      status: roomMember.status,
+    })
+    .from(roomMember)
+    .where(and(eq(roomMember.roomId, roomId), eq(roomMember.userId, userId)))
+    .limit(1);
+
+  if (existingMembership && existingMembership.status === "requested") {
+    throw new HTTPException(400, {
+      message:
+        "You have already requested access to this chat room. Please wait for approval.",
+    });
+  }
+
+  if (existingMembership && existingMembership.status === "joined") {
+    throw new HTTPException(400, {
+      message: "You are already a member of this chat room.",
+    });
+  }
+
+  if (existingMembership && existingMembership.status === "invited") {
+    throw new HTTPException(400, {
+      message: "You have already been invited to this chat room. Please check your invitations.",
+    });
+  }
+
+  // Create a new membership request
+  await db.insert(roomMember).values({
+    roomId,
+    userId,
+    role: "member",
+    status: "requested",
+  });
+
+  return { message: "Access request sent successfully" };
 };
