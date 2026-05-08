@@ -46,12 +46,12 @@ const rootElement = document.getElementById("root") as HTMLElement;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
-    <StrictMode>
+    // <StrictMode>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <App />
         </AuthProvider>
       </QueryClientProvider>
-    </StrictMode>,
+    // </StrictMode>,
   );
 }

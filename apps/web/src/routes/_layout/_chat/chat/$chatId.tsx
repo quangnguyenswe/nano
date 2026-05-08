@@ -14,12 +14,6 @@ export const Route = createFileRoute("/_layout/_chat/chat/$chatId")({
 
 function RouteComponent() {
   const { chatId } = Route.useParams();
-  const navigate = useNavigate();
-  // const chat = null; // Assume this function fetches chat data by ID
-
-  // if (!chat) {
-  //   navigate({ to: "/chat" });
-  // }
 
   // const messagesFromDb = await getMessagesByChatId({
   //   id: chatId,
@@ -27,6 +21,5 @@ function RouteComponent() {
 
   // const uiMessages = convertToUIMessages(messagesFromDb);
 
-  // return <Chat id={chatId} initialMessages={uiMessages} />;
   return <Chat id={chatId} />;
 }

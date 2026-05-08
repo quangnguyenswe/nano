@@ -19,6 +19,7 @@ export const createChatRoom = async (
       createdBy: userId,
       name: data.name,
       type: data.type,
+      visibility: data.visibility,
       avatarUrl: data.avatarUrl,
     })
     .returning();

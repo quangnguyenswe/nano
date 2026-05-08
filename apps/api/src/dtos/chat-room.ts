@@ -11,6 +11,7 @@ export type MemberRoles = z.infer<typeof memberRoles>;
 export const CreateChatRoomSchema = z.object({
   name: z.string().min(3).max(50),
   type: z.enum(RoomTypes).default("group"),
+  visibility: z.enum(["public", "private"]).default("public"),
   avatarUrl: z.string().optional(),
 });
 

@@ -28,6 +28,7 @@ import { ChatHistory } from "@/types/chat-room";
 import useSWRInfinite from "swr/infinite";
 import { httpDelete, httpGet, httpPost } from "@/api/http";
 import { LoaderIcon } from "lucide-react";
+import { WINDOW_EVENTS } from "@/constants";
 
 const PAGE_SIZE = 20;
 
@@ -83,6 +84,43 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     { fallbackData: [], revalidateOnFocus: false },
   );
 
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const custom = e as CustomEvent;
+      const newChat = custom.detail;
+
+      if (!newChat) return;
+
+      mutate((pages) => {
+        if (!pages) return pages;
+
+        // avoid duplicates
+        const alreadyExists = pages.some((page) =>
+          page.chats.some((c) => c.id === newChat.id),
+        );
+        if (alreadyExists) return pages;
+
+        const newPages = [...pages];
+
+        if (newPages.length === 0) {
+          newPages.push({ chats: [newChat], hasMore: true });
+        } else {
+          newPages[0] = {
+            ...newPages[0],
+            chats: [newChat, ...newPages[0].chats],
+          };
+        }
+
+        return newPages;
+      }, false);
+    };
+
+    window.addEventListener(WINDOW_EVENTS.CHAT_CREATED, handler);
+
+    return () =>
+      window.removeEventListener(WINDOW_EVENTS.CHAT_CREATED, handler);
+  }, [mutate]);
+
   const { clearMessages } = useMessageStorage({
     messagePersistenceAdapter: IndexedDBAdapter,
     chatId: id!,
@@ -114,7 +152,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     await clearMessages();
 
     if (isCurrentChat) {
-      navigate({ to: "/chat/new" });
+      navigate({ to: "/chat" });
     }
 
     mutate((chatHistories) => {
@@ -144,7 +182,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     }
 
     if (isCurrentChat) {
-      navigate({ to: "/chat/new" });
+      navigate({ to: "/chat" });
     }
 
     mutate((chatHistories) => {
@@ -171,10 +209,8 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
   if (isLoading) {
     return (
-      <SidebarGroup >
-        <div className="px-2 py-1 text-primary text-xs">
-          Today
-        </div>
+      <SidebarGroup>
+        <div className="px-2 py-1 text-primary text-xs">Today</div>
         <SidebarGroupContent>
           <div className="flex flex-col">
             {[44, 32, 28, 64, 52].map((item) => (

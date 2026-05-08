@@ -16,7 +16,7 @@ import { Route as LayoutChatRouteImport } from './routes/_layout/_chat'
 import { Route as AuthenticationVerificationRouteImport } from './routes/_authentication/verification'
 import { Route as AuthenticationSignupRouteImport } from './routes/_authentication/signup'
 import { Route as AuthenticationLoginRouteImport } from './routes/_authentication/login'
-import { Route as LayoutChatChatNewRouteImport } from './routes/_layout/_chat/chat/new'
+import { Route as LayoutChatChatIndexRouteImport } from './routes/_layout/_chat/chat/index'
 import { Route as LayoutChatChatChatIdRouteImport } from './routes/_layout/_chat/chat/$chatId'
 
 const LayoutRoute = LayoutRouteImport.update({
@@ -52,9 +52,9 @@ const AuthenticationLoginRoute = AuthenticationLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthenticationRoute,
 } as any)
-const LayoutChatChatNewRoute = LayoutChatChatNewRouteImport.update({
-  id: '/chat/new',
-  path: '/chat/new',
+const LayoutChatChatIndexRoute = LayoutChatChatIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
   getParentRoute: () => LayoutChatRoute,
 } as any)
 const LayoutChatChatChatIdRoute = LayoutChatChatChatIdRouteImport.update({
@@ -69,7 +69,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof AuthenticationSignupRoute
   '/verification': typeof AuthenticationVerificationRoute
   '/chat/$chatId': typeof LayoutChatChatChatIdRoute
-  '/chat/new': typeof LayoutChatChatNewRoute
+  '/chat': typeof LayoutChatChatIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -77,7 +77,7 @@ export interface FileRoutesByTo {
   '/signup': typeof AuthenticationSignupRoute
   '/verification': typeof AuthenticationVerificationRoute
   '/chat/$chatId': typeof LayoutChatChatChatIdRoute
-  '/chat/new': typeof LayoutChatChatNewRoute
+  '/chat': typeof LayoutChatChatIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,7 +89,7 @@ export interface FileRoutesById {
   '/_authentication/verification': typeof AuthenticationVerificationRoute
   '/_layout/_chat': typeof LayoutChatRouteWithChildren
   '/_layout/_chat/chat/$chatId': typeof LayoutChatChatChatIdRoute
-  '/_layout/_chat/chat/new': typeof LayoutChatChatNewRoute
+  '/_layout/_chat/chat/': typeof LayoutChatChatIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -99,15 +99,9 @@ export interface FileRouteTypes {
     | '/signup'
     | '/verification'
     | '/chat/$chatId'
-    | '/chat/new'
+    | '/chat'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/login'
-    | '/signup'
-    | '/verification'
-    | '/chat/$chatId'
-    | '/chat/new'
+  to: '/' | '/login' | '/signup' | '/verification' | '/chat/$chatId' | '/chat'
   id:
     | '__root__'
     | '/'
@@ -118,7 +112,7 @@ export interface FileRouteTypes {
     | '/_authentication/verification'
     | '/_layout/_chat'
     | '/_layout/_chat/chat/$chatId'
-    | '/_layout/_chat/chat/new'
+    | '/_layout/_chat/chat/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -178,11 +172,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticationLoginRouteImport
       parentRoute: typeof AuthenticationRoute
     }
-    '/_layout/_chat/chat/new': {
-      id: '/_layout/_chat/chat/new'
-      path: '/chat/new'
-      fullPath: '/chat/new'
-      preLoaderRoute: typeof LayoutChatChatNewRouteImport
+    '/_layout/_chat/chat/': {
+      id: '/_layout/_chat/chat/'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof LayoutChatChatIndexRouteImport
       parentRoute: typeof LayoutChatRoute
     }
     '/_layout/_chat/chat/$chatId': {
@@ -213,12 +207,12 @@ const AuthenticationRouteWithChildren = AuthenticationRoute._addFileChildren(
 
 interface LayoutChatRouteChildren {
   LayoutChatChatChatIdRoute: typeof LayoutChatChatChatIdRoute
-  LayoutChatChatNewRoute: typeof LayoutChatChatNewRoute
+  LayoutChatChatIndexRoute: typeof LayoutChatChatIndexRoute
 }
 
 const LayoutChatRouteChildren: LayoutChatRouteChildren = {
   LayoutChatChatChatIdRoute: LayoutChatChatChatIdRoute,
-  LayoutChatChatNewRoute: LayoutChatChatNewRoute,
+  LayoutChatChatIndexRoute: LayoutChatChatIndexRoute,
 }
 
 const LayoutChatRouteWithChildren = LayoutChatRoute._addFileChildren(

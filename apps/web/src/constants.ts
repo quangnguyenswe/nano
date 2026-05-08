@@ -65,3 +65,7 @@ export const EXPORT_IMAGE_TYPES = {
   svg: "svg",
   clipboard: "clipboard",
 } as const;
+
+export const WINDOW_EVENTS = {
+  CHAT_CREATED: "chat-created",
+}

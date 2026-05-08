@@ -142,7 +142,7 @@ export default function Chat(props: ChatProps) {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => navigate({ to: "/chat/new" })}
+                onClick={() => navigate({ to: "/chat" })}
               >
                 Back to Chats
               </Button>

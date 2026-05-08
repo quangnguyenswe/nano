@@ -17,7 +17,7 @@ export const Route = createFileRoute("/")({
         });
       } else {
         throw redirect({
-          to: "/chat/new",
+          to: "/chat",
         });
       }
     }

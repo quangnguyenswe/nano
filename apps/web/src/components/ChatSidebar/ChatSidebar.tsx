@@ -83,7 +83,7 @@ export function ChatSidebar(props: ChatSidebarProps) {
                     <Button
                       className="h-8 p-1 md:h-fit md:p-2"
                       onClick={() => {
-                        navigate({ to: "/chat/new" });
+                        navigate({ to: "/chat" });
                       }}
                       type="button"
                       variant="ghost"

@@ -55,7 +55,7 @@ export default function EmailLoginForm(props: EmailLoginFormProps) {
       }
 
       toast.success("Logged in successfully");
-      navigate({ to: "/chat/new"});
+      navigate({ to: "/chat"});
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to sign in");
     } finally {
