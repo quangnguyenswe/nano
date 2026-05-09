@@ -27,11 +27,10 @@ import {
 import { User } from "better-auth/types";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { SidebarUser } from "./SidebarUser";
-import SiteLogo from "../SiteLogo";
-import { useNavigate } from "@tanstack/react-router";
 import { SidebarHistory } from "./ChatHistory";
 import { deleteAllChatRoomsFromLocalStorage } from "@/data/localStorage";
 import SearchInput from "../SearchInput";
+import CreateRoomButton from "../Chat/CreateRoomButton";
 
 type ChatSidebarProps = {
   user: User | undefined | null;
@@ -41,8 +40,6 @@ export function ChatSidebar(props: ChatSidebarProps) {
   const { user } = props;
 
   const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false);
-
-  const navigate = useNavigate();
 
   const handleDeleteAll = () => {
     const result = deleteAllChatRoomsFromLocalStorage();
@@ -78,23 +75,20 @@ export function ChatSidebar(props: ChatSidebarProps) {
                     </TooltipContent>
                   </Tooltip>
                 )}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
+                {/* <Tooltip>
+                  <TooltipTrigger asChild> */}
+                    <CreateRoomButton
                       className="h-8 p-1 md:h-fit md:p-2"
-                      onClick={() => {
-                        navigate({ to: "/chat" });
-                      }}
                       type="button"
                       variant="ghost"
                     >
                       <PlusIcon />
-                    </Button>
-                  </TooltipTrigger>
+                    </CreateRoomButton>
+                  {/* </TooltipTrigger>
                   <TooltipContent align="end" className="hidden md:block">
                     New Chat
                   </TooltipContent>
-                </Tooltip>
+                </Tooltip> */}
               </div>
             </div>
           </SidebarMenu>
@@ -103,7 +97,9 @@ export function ChatSidebar(props: ChatSidebarProps) {
           <SearchInput />
           <SidebarHistory user={user!} />
         </SidebarContent>
-        <SidebarFooter className="p-0">{user && <SidebarUser user={user} />}</SidebarFooter>
+        <SidebarFooter className="p-0">
+          {user && <SidebarUser user={user} />}
+        </SidebarFooter>
         <SidebarRail />
       </Sidebar>
 
