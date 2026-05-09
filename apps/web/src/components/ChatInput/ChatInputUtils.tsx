@@ -7,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 type ChatInputUtilsProps = {
   disabled?: boolean;
@@ -17,23 +16,17 @@ export default function ChatInputUtils(props: ChatInputUtilsProps) {
   return (
     <div className="m-1 flex items-center gap-1">
       <DropdownMenu>
-        <DropdownMenuTrigger asChild={disabled}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                disabled={disabled}
-                type="button"
-                variant="ghost"
-                className={cn("rounded-full size-9 hover:bg-accent p-1")}
-              >
-                <span className="sr-only">More</span>
-                <Plus className="w-5! h-5! text-muted-foreground hover:text-foreground" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Open More Options</p>
-            </TooltipContent>
-          </Tooltip>
+        <DropdownMenuTrigger asChild>
+          <Button
+            disabled={disabled}
+            type="button"
+            variant="ghost"
+            title="Open more actions"
+            className={cn("rounded-full size-9 hover:bg-accent p-1")}
+          >
+            <span className="sr-only">More</span>
+            <Plus className="w-5! h-5! text-muted-foreground hover:text-foreground" />
+          </Button>
         </DropdownMenuTrigger>
         {/* Dropdown menu content goes here */}
         <DropdownMenuContent align="start">

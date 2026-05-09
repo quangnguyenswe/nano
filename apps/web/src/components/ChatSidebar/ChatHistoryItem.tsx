@@ -40,7 +40,7 @@ const PureChatHistoryItem = ({
   // });
 
   return (
-    <div className="group/item relative">
+    <div className="group/item relative hover:bg-muted/30 ">
       <Link
         to="/chat/$chatId"
         params={{ chatId: chat.id }}
@@ -48,7 +48,7 @@ const PureChatHistoryItem = ({
       >
         <div
           className={cn(
-            "hover:bg-muted/30 relative flex min-w-0 cursor-pointer items-center gap-4 py-3 px-1.5 rounded-md",
+            "relative flex min-w-0 cursor-pointer items-center gap-4 py-3 px-1.5 rounded-md",
             isActive && "bg-muted!",
           )}
         >
