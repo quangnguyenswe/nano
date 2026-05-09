@@ -1,15 +1,8 @@
 import Chat from "@/components/Chat/Chat";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_layout/_chat/chat/$chatId")({
   component: RouteComponent,
-  beforeLoad: async (context) => {
-    const { chatId } = context.params;
-    // const chat = await getChatById({ id: chatId });
-    // if (!chat) {
-    //   context.navigate({ to: "/chat" });
-    // }
-  },
 });
 
 function RouteComponent() {

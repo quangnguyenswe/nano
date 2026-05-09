@@ -93,7 +93,10 @@ function RouteComponent() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <Form {...form}>
           <DialogContent className="sm:max-w-lg">
-            <form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+            <form
+              className="flex flex-col gap-4"
+              onSubmit={form.handleSubmit(onSubmit)}
+            >
               <DialogHeader>
                 <DialogTitle>Create Chat Room</DialogTitle>
                 <DialogDescription>

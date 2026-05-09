@@ -31,7 +31,7 @@ export const saveRoomToChatList = (chat: ChatRoomMetadata) => {
     createdAt: chat.createdAt,
     lastUpdated: chat.lastUpdated,
     unreadCount: chat.unreadCount,
-  }
+  };
   try {
     localStorage.setItem(
       `${STORAGE_KEYS.LOCAL_STORAGE_CHATS}`,
@@ -44,9 +44,7 @@ export const saveRoomToChatList = (chat: ChatRoomMetadata) => {
 
 export const listChatRoomsFromLocalStorage = (): LocalStorageChatRooms => {
   try {
-    const data = localStorage.getItem(
-      `${STORAGE_KEYS.LOCAL_STORAGE_CHATS}`,
-    );
+    const data = localStorage.getItem(`${STORAGE_KEYS.LOCAL_STORAGE_CHATS}`);
     if (data) {
       return JSON.parse(data);
     }
@@ -64,7 +62,7 @@ export const getChatRooms = (): ChatRoomMetadata[] => {
     ...roomData,
   }));
   return chatRooms.sort((a, b) => b.lastUpdated - a.lastUpdated);
-}
+};
 
 export const deleteChatRoomFromLocalStorage = (chatId: string) => {
   try {
@@ -75,8 +73,7 @@ export const deleteChatRoomFromLocalStorage = (chatId: string) => {
       JSON.stringify(chatRooms),
     );
     return true;
-  }
-  catch (error) {
+  } catch (error) {
     logger.error("Failed to delete chat room from localStorage:", error);
     return false;
   }
@@ -90,14 +87,32 @@ export const deleteAllChatRoomsFromLocalStorage = () => {
     logger.error("Failed to delete all chat rooms from localStorage:", error);
     return false;
   }
-}
+};
 
-export const getLatestChatRoom = () => {
-  const chatRooms = getChatRooms();
-  if (chatRooms.length === 0) {
-    return null;
+export const getLatestChatRoom = (): string => {
+  try {
+    const latestChatRoom = localStorage.getItem(
+      `${STORAGE_KEYS.LATEST_CHAT_ROOM}`,
+    );
+    return latestChatRoom || "";
+  } catch (error) {
+    logger.error("Failed to get latest chat room from localStorage:", error);
+    return "";
   }
-  return chatRooms.reduce((latest, room) => {
-    return room.lastUpdated > latest.lastUpdated ? room : latest;
-  }, chatRooms[0]);
-}
+};
+
+export const setLatestChatRoom = (chatId: string) => {
+  try {
+    localStorage.setItem(`${STORAGE_KEYS.LATEST_CHAT_ROOM}`, chatId);
+  } catch (error) {
+    logger.error("Failed to set latest chat room in localStorage:", error);
+  }
+};
+
+export const clearLatestChatRoom = () => {
+  try {
+    localStorage.removeItem(`${STORAGE_KEYS.LATEST_CHAT_ROOM}`);
+  } catch (error) {
+    logger.error("Failed to clear latest chat room from localStorage:", error);
+  }
+};

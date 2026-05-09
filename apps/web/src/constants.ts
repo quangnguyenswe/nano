@@ -5,6 +5,8 @@ export const STORAGE_KEYS = {
 
   VERSION_DATA_STATE: "version-dataState",
   VERSION_FILES: "version-files",
+
+  LATEST_CHAT_ROOM: "nano_latest_chat_room",
 } as const;
 
 export const SAVE_TO_LOCAL_STORAGE_TIMEOUT = 300;

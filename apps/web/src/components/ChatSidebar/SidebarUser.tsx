@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { Button } from "../ui/button";
 import useSignOut from "@/hooks/use-signout";
 import { useTheme } from "../theme-provider";
+import { useNavigate } from "@tanstack/react-router";
 
 type SidebarUserProps = {
   user: User;
@@ -29,11 +30,13 @@ export function SidebarUser(props: SidebarUserProps) {
   const { user } = props;
   const { mutateAsync: signOut } = useSignOut();
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
   const handleSignOut = async () => {
     try {
       await signOut();
       queryClient.clear();
       toast.success("Signed out successfully");
+      navigate({ to: "/"})
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Failed to sign out",

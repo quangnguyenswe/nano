@@ -25,9 +25,7 @@ export default function Navigation() {
         <div className="flex w-full items-center justify-between max-lg:gap-4 px-4 sm:px-8">
           <div className="flex items-center gap-3">
             {/* {toggle} */}
-            <Link to="/">
-              <SiteLogo />
-            </Link>
+            <SiteLogo />
           </div>
           <div className="md:flex items-center justify-end gap-2 sm:gap-6 lg:justify-between hidden ">
             {/* <NavMenu /> */}

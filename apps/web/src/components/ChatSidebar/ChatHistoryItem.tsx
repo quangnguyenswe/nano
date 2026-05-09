@@ -20,6 +20,7 @@ import { ChatHistory, ChatRoom } from "@/types/chat-room";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { formatLastMessage } from "@/lib/date";
+import { setLatestChatRoom } from "@/data/localStorage";
 
 const PureChatHistoryItem = ({
   chat,
@@ -44,7 +45,10 @@ const PureChatHistoryItem = ({
       <Link
         to="/chat/$chatId"
         params={{ chatId: chat.id }}
-        onClick={() => setOpenMobile(false)}
+        onClick={() => {
+          setOpenMobile(false);
+          setLatestChatRoom(chat.id);
+        }}
       >
         <div
           className={cn(
@@ -53,8 +57,14 @@ const PureChatHistoryItem = ({
           )}
         >
           <Avatar className="size-10 border border-border bg-border">
-            <AvatarImage src={chat.avatarUrl} alt={chat.name} className="object-contain" />
-            <AvatarFallback className="bg-background">{chat.name[0]}</AvatarFallback>
+            <AvatarImage
+              src={chat.avatarUrl}
+              alt={chat.name}
+              className="object-contain"
+            />
+            <AvatarFallback className="bg-background">
+              {chat.name[0]}
+            </AvatarFallback>
           </Avatar>
           <div className="min-w-0 grow flex flex-col gap-2">
             <div className="flex items-center justify-between pr-2">
@@ -110,14 +120,17 @@ const PureChatHistoryItem = ({
   );
 };
 
-export const ChatHistoryItem = memo(PureChatHistoryItem, (prevProps, nextProps) => {
-  if (
-    prevProps.isActive !== nextProps.isActive ||
-    prevProps.chat.id !== nextProps.chat.id
-  ) {
-    return false;
-  }
-  return true;
-});
+export const ChatHistoryItem = memo(
+  PureChatHistoryItem,
+  (prevProps, nextProps) => {
+    if (
+      prevProps.isActive !== nextProps.isActive ||
+      prevProps.chat.id !== nextProps.chat.id
+    ) {
+      return false;
+    }
+    return true;
+  },
+);
 
 //https://excalidraw.com/#room=83325dd1885048312b85,i79qCXYL8xSZid6GT-v8kw

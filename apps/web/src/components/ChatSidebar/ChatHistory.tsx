@@ -29,6 +29,7 @@ import useSWRInfinite from "swr/infinite";
 import { httpDelete, httpGet, httpPost } from "@/api/http";
 import { LoaderIcon } from "lucide-react";
 import { WINDOW_EVENTS } from "@/constants";
+import { clearLatestChatRoom, setLatestChatRoom } from "@/data/localStorage";
 
 const PAGE_SIZE = 20;
 
@@ -110,6 +111,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
             chats: [newChat, ...newPages[0].chats],
           };
         }
+        setLatestChatRoom(newChat.id);
 
         return newPages;
       }, false);
@@ -152,6 +154,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     await clearMessages();
 
     if (isCurrentChat) {
+      clearLatestChatRoom();
       navigate({ to: "/chat" });
     }
 
@@ -182,6 +185,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     }
 
     if (isCurrentChat) {
+      clearLatestChatRoom();
       navigate({ to: "/chat" });
     }
 

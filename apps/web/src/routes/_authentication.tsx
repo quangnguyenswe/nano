@@ -1,13 +1,22 @@
 import SiteLogo from "@/components/SiteLogo";
+import { getLatestChatRoom } from "@/data/localStorage";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authentication")({
   component: RouteComponent,
   beforeLoad: async ({ context }) => {
+    const latestChatRoom = getLatestChatRoom();
     if (context.user) {
-      throw redirect({
-        to: "/",
-      });
+      if (latestChatRoom) {
+        throw redirect({
+          to: "/chat/$chatId",
+          params: { chatId: latestChatRoom },
+        });
+      } else {
+        throw redirect({
+          to: "/chat",
+        });
+      }
     }
   },
 });
