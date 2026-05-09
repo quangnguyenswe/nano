@@ -28,7 +28,7 @@ function RouteComponent() {
         <ChatSidebar user={user} />
         <SidebarInset>
           <div className="overscroll-behavior-contain flex h-dvh min-w-0 touch-pan-y flex-col bg-background">
-            <ChatHeader chatId={chatId!} isReadonly={false} />
+            <ChatHeader chatId={chatId!} />
             <Outlet />
           </div>
         </SidebarInset>

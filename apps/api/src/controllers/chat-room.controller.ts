@@ -183,24 +183,6 @@ export const leaveChatRoom = async (userId: string, roomId: string) => {
   return { message: "You have left the chat room successfully" };
 };
 
-export const getMemberStatus = async (userId: string, roomId: string) => {
-  const [membership] = await db
-    .select({
-      status: roomMember.status,
-    })
-    .from(roomMember)
-    .where(and(eq(roomMember.roomId, roomId), eq(roomMember.userId, userId)))
-    .limit(1);
-
-  if (!membership) {
-    return {
-      status: "guest",
-    };
-  }
-
-  return membership.status;
-};
-
 export const sendChatRoomAccessRequest = async (
   userId: string,
   roomId: string,

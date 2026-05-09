@@ -9,7 +9,6 @@ import {
   createChatRoom,
   deleteChatRoom,
   getUserChatRooms,
-  getMemberStatus,
   leaveChatRoom,
   sendChatRoomAccessRequest,
 } from "../controllers/chat-room.controller";
@@ -70,13 +69,6 @@ const chatRoom = new Hono<Context>()
 
     const response = await leaveChatRoom(userId, roomId);
     return c.json(response);
-  })
-  .get("/status/:roomId", async (c) => {
-    const userId = c.get("userId");
-    const { roomId } = c.req.param();
-
-    const status = await getMemberStatus(userId, roomId);
-    return c.json({ status });
   })
   .post("/request-access/:roomId", async (c) => {
     const userId = c.get("userId");

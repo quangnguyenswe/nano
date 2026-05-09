@@ -23,6 +23,7 @@ import {
 } from "../ui/empty";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
+import { MembershipRole, useMembershipStore } from "@/store/membership";
 
 interface ChatProps {
   id: string;
@@ -39,6 +40,7 @@ export default function Chat(props: ChatProps) {
   const [hasAccessPermission, setHasAccessPermission] = useState(false);
   const [memberShip, setMembership] = useState<string>("guest");
   const navigate = useNavigate();
+  const { setRole } = useMembershipStore();
   // const { socket, onChatRoomDetailsUpdate, emitChatRoomDetails } = useSocket();
 
   // useEffect(() => {
@@ -73,18 +75,21 @@ export default function Chat(props: ChatProps) {
   // }, [socket, setMessages, id]);
 
   // Check if user has access to the chat room, if not open a dialog to request access
-  const checkAccessibility = async () => {
+  const getMembershipStatus = async () => {
     if (!id) {
       return;
     }
     const { response, error } = await httpGet<{
       status: string;
-    }>(`/chat-room/status/${id}`);
+      role: MembershipRole | null;
+    }>(`/membership/status/${id}`);
     if (error || !response) {
       toast.error(error?.message || "Failed to check chat room access");
       return;
     }
     setMembership(response.status);
+    setRole(response.role as MembershipRole);
+
     if (response.status === "guest") {
       setHasAccessPermission(false);
       toast.error("You do not have access to this chat room");
@@ -106,7 +111,7 @@ export default function Chat(props: ChatProps) {
   };
 
   useEffect(() => {
-    checkAccessibility();
+    getMembershipStatus();
   }, [id]);
 
   return (
@@ -118,7 +123,7 @@ export default function Chat(props: ChatProps) {
           setMessages={setMessages}
           isLoading={isLoading}
         />
-      ) : memberShip === "guest" ? (
+      ) : memberShip === "none" ? (
         <div className="relative flex-1 flex items-center justify-center">
           <Empty>
             <EmptyHeader>
