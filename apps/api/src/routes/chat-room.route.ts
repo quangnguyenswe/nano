@@ -10,7 +10,6 @@ import {
   deleteChatRoom,
   getUserChatRooms,
   leaveChatRoom,
-  sendChatRoomAccessRequest,
 } from "../controllers/chat-room.controller";
 
 const chatRoom = new Hono<Context>()
@@ -69,13 +68,6 @@ const chatRoom = new Hono<Context>()
 
     const response = await leaveChatRoom(userId, roomId);
     return c.json(response);
-  })
-  .post("/request-access/:roomId", async (c) => {
-    const userId = c.get("userId");
-    const { roomId } = c.req.param();
-
-    const response = await sendChatRoomAccessRequest(userId, roomId);
-    return c.json(response, 201);
   });
 
 export default chatRoom;

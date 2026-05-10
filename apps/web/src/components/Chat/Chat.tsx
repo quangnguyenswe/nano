@@ -100,13 +100,13 @@ export default function Chat(props: ChatProps) {
 
   const handleRequestAccess = async () => {
     const { response, error } = await httpPost(
-      `/chat-room/request-access/${id}`,
+      `/membership/request-access/${id}`,
     );
     if (error || !response) {
       toast.error(error?.message || "Failed to request access");
       return;
     }
-
+    setMembership("pending");
     toast.success("Access request sent successfully");
   };
 

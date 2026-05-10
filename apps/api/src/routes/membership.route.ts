@@ -4,6 +4,7 @@ import {
   getChatRoomRequests,
   getMemberStatus,
   handleMembershipRequest,
+  sendChatRoomAccessRequest,
 } from "../controllers/membership.controller";
 
 const membership = new Hono<Context>()
@@ -21,13 +22,25 @@ const membership = new Hono<Context>()
     const requests = await getChatRoomRequests(userId, roomId);
     return c.json(requests);
   })
+  .post("/request-access/:roomId", async (c) => {
+    const userId = c.get("userId");
+    const { roomId } = c.req.param();
+
+    const response = await sendChatRoomAccessRequest(userId, roomId);
+    return c.json(response, 201);
+  })
   .put("/handle-request/:roomId", async (c) => {
     const userId = c.get("userId");
     const { roomId } = c.req.param();
     const { approve, requestId } = await c.req.json();
 
-    await handleMembershipRequest(userId, requestId, roomId, approve);
-    return c.json({ message: "Membership request handled successfully" });
+    const message = await handleMembershipRequest(
+      userId,
+      roomId,
+      requestId,
+      approve,
+    );
+    return c.json(message);
   });
 
 export default membership;

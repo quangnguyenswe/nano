@@ -11,9 +11,10 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Mail } from "lucide-react";
-import { httpGet } from "@/api/http";
+import { Check, Mail, XIcon } from "lucide-react";
+import { httpGet, httpPut } from "@/api/http";
 import { toast } from "sonner";
+import { Button } from "../ui/button";
 
 type PureMemberCommandProps = {
   open: boolean;
@@ -50,6 +51,26 @@ function PureMemberCommand(props: PureMemberCommandProps) {
       item.email.toLowerCase().includes(search.toLowerCase()),
   );
 
+  const handleRequestAction = async (
+    requestId: string,
+    action: "accept" | "reject",
+  ) => {
+    const { response, error } = await httpPut<{ message: string }>(
+      `/membership/handle-request/${chatId}`,
+      {
+        requestId,
+        approve: action === "accept",
+      },
+    );
+    if (error || !response) {
+      toast.error(`Failed to ${action} the request`);
+      return;
+    }
+    toast.success(response.message);
+    // Refresh the requests list after action
+    fetchRequests();
+  };
+
   useEffect(() => {
     if (open) {
       fetchRequests();
@@ -73,13 +94,13 @@ function PureMemberCommand(props: PureMemberCommandProps) {
           <CommandEmpty>No results found.</CommandEmpty>
           {filteredUsers.length > 0 && (
             <CommandGroup heading="Requests" className="p-2">
-              {filteredUsers.map((user) => (
-                <CommandItem key={user.id} className={`cursor-pointer`}>
+              {filteredUsers.map((request) => (
+                <CommandItem key={request.id} className={`cursor-pointer`}>
                   <div className="flex w-full items-center gap-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarImage src={request.avatar} alt={request.name} />
                       <AvatarFallback>
-                        {user.name
+                        {request.name
                           .split(" ")
                           .map((n) => n[0])
                           .join("")}
@@ -87,12 +108,36 @@ function PureMemberCommand(props: PureMemberCommandProps) {
                     </Avatar>
                     <div className="flex-1 space-y-0.5">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-medium">{user.name}</span>
+                        <span className="text-sm font-medium">
+                          {request.name}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Mail className="h-3 w-3" />
-                        <span>{user.email}</span>
+                        <span>{request.email}</span>
                       </div>
+                    </div>
+                    <div className="ml-auto flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant={"default"}
+                        onClick={() =>
+                          handleRequestAction(request.id, "accept")
+                        }
+                      >
+                        <Check className="h-3 w-3 md:hidden" />
+                        <span className="hidden md:block">Accept</span>
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={"destructive"}
+                        onClick={() =>
+                          handleRequestAction(request.id, "reject")
+                        }
+                      >
+                        <XIcon className="h-3 w-3 md:hidden" />
+                        <span className="hidden md:block">Reject</span>
+                      </Button>
                     </div>
                   </div>
                 </CommandItem>
