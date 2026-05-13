@@ -37,7 +37,6 @@ export default function Chat(props: ChatProps) {
     messagePersistenceAdapter: IndexedDBAdapter,
     chatId: id,
   });
-  const [hasAccessPermission, setHasAccessPermission] = useState(false);
   const [memberShip, setMembership] = useState<string>("guest");
   const navigate = useNavigate();
   const { setRole } = useMembershipStore();
@@ -91,10 +90,7 @@ export default function Chat(props: ChatProps) {
     setRole(response.role as MembershipRole);
 
     if (response.status === "guest") {
-      setHasAccessPermission(false);
       toast.error("You do not have access to this chat room");
-    } else {
-      setHasAccessPermission(true);
     }
   };
 

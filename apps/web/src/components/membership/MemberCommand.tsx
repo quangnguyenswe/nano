@@ -11,10 +11,17 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Check, Mail, XIcon } from "lucide-react";
+import { Check, Mail, User2, XIcon } from "lucide-react";
 import { httpGet, httpPut } from "@/api/http";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "../ui/empty";
 
 type PureMemberCommandProps = {
   open: boolean;
@@ -78,7 +85,15 @@ function PureMemberCommand(props: PureMemberCommandProps) {
   }, [open, chatId]);
 
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange}>
+    <CommandDialog
+      open={open}
+      onOpenChange={(open) => {
+        if (!open) {
+          setSearch("");
+        }
+        onOpenChange(open);
+      }}
+    >
       <Command>
         <div className="flex items-center gap-2 border-b">
           <div className="flex-1">
@@ -91,7 +106,19 @@ function PureMemberCommand(props: PureMemberCommandProps) {
           </div>
         </div>
         <CommandList className="active:ring-0">
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandEmpty>
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <User2 />
+                </EmptyMedia>
+                <EmptyTitle>No results found</EmptyTitle>
+                <EmptyDescription>
+                  We couldn't find any users matching your search.
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          </CommandEmpty>
           {filteredUsers.length > 0 && (
             <CommandGroup heading="Requests" className="p-2">
               {filteredUsers.map((request) => (

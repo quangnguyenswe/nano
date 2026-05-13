@@ -34,12 +34,20 @@ export default function Navigation() {
               {/* <ThemeCustomizer /> */}
               {/* <ModeToggle /> */}
               <div className="flex items-center gap-2">
-                <Button asChild size={"sm"} variant={"outline"}>
-                  <Link to="/signup">Sign Up</Link>
-                </Button>
-                <Button asChild size={"sm"} variant={"default"}>
-                  <Link to="/login">Log In</Link>
-                </Button>
+                {user ? (
+                  <Button asChild size={"sm"} variant={"default"}>
+                    <Link to="/chat">Let's Chat</Link>
+                  </Button>
+                ) : (
+                  <>
+                    <Button asChild size={"sm"} variant={"outline"}>
+                      <Link to="/signup">Sign Up</Link>
+                    </Button>
+                    <Button asChild size={"sm"} variant={"default"}>
+                      <Link to="/login">Log In</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
