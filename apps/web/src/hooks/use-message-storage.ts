@@ -10,6 +10,9 @@ interface UseMessageStorageProps {
 
 export const savedMessagesAtom = atom<ChatMessage[]>([]);
 export const isLoadingMessagesAtom = atom<boolean>(false);
+export const latestMessageByChatIdAtom = atom<
+  Record<string, ChatMessage | null>
+>({});
 
 export const useMessageStorage = ({
   messagePersistenceAdapter,
@@ -18,6 +21,9 @@ export const useMessageStorage = ({
   // use jotai store to get and set messages
   const [messages, setMessages] = useAtom(savedMessagesAtom);
   const [isLoading, setIsLoading] = useAtom(isLoadingMessagesAtom);
+  const [latestMessageByChatId, setLatestMessageByChatId] = useAtom(
+    latestMessageByChatIdAtom,
+  );
 
   const messageRef = useRef(messages);
   messageRef.current = messages;
@@ -63,10 +69,21 @@ export const useMessageStorage = ({
     }
   }, [messagePersistenceAdapter, chatId, setMessages]);
 
+  const getLatestMessage = useCallback(async () => {
+    try {
+      const latestMessages = await messagePersistenceAdapter.getLatestMessage();
+      setLatestMessageByChatId(latestMessages);
+    } catch (error) {
+      console.warn("Failed to get latest messages:", error);
+    }
+  }, [messagePersistenceAdapter, chatId, setLatestMessageByChatId]);
+
   return {
     isLoading,
     loadMessages,
     saveMessages,
     clearMessages,
+    getLatestMessage,
+    latestMessageByChatId: latestMessageByChatId.current,
   };
 };

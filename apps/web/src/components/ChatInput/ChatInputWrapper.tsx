@@ -9,6 +9,8 @@ import { useSocket } from "@/providers/socket";
 import { nanoid } from "nanoid";
 import { ChatMessage, MessageStatus, MessageType } from "@/types/message";
 import ChatInputUtils from "./ChatInputUtils";
+import { useAtom } from "@/store/jotai/message-jotai";
+import { latestMessageByChatIdAtom } from "@/hooks/use-message-storage";
 
 type ChatInputWrapperProps = {
   className?: string;
@@ -26,6 +28,7 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
   const { className, input, setInput, messages, setMessages, chatId, disabled } = props;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasAutoFocused = useRef(false);
+  const [_, setLatestMessageByChatId] = useAtom(latestMessageByChatIdAtom);
 
   const { socket, emitMessage } = useSocket();
   const { user } = useAuth();
@@ -74,6 +77,7 @@ export default function ChatInputWrapper(props: ChatInputWrapperProps) {
     };
 
     setMessages((prevMessages) => [...prevMessages, newMessage]);
+    setLatestMessageByChatId((prev) => ({ ...prev, [chatId]: newMessage }));
     emitMessage(messageId, input, timestamp);
 
     resetHeight();

@@ -8,6 +8,8 @@ import dayjs from "dayjs";
 import { useSocket } from "@/providers/socket";
 import { nanoid } from "nanoid";
 import { type ChatMessage, MessageStatus, MessageType } from "@/types/message";
+import { useAtom } from "@/store/jotai/message-jotai";
+import { latestMessageByChatIdAtom } from "@/hooks/use-message-storage";
 
 interface MessagesProps {
   chatId: string;
@@ -27,24 +29,24 @@ export default function BaseMessages(props: MessagesProps) {
     isAtBottom,
     scrollToBottom,
   } = useMessages();
+  const [_, setLatestMessageByChatId] = useAtom(latestMessageByChatIdAtom);
 
   // Handle incoming messages from other users
   useEffect(() => {
     const handleNewMessage = (data: any) => {
       // TODO: Save message to IndexedDB for offline support
+      const newMessage: ChatMessage = {
+        id: data.messageId || nanoid(),
+        content: data.content,
+        userId: data.userId,
+        userName: data.userName,
+        type: MessageType.TEXT,
+        timestamp: data.timestamp,
+        status: MessageStatus.SENT,
+      };
       if (data.chatId === chatId) {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            id: data.messageId || nanoid(),
-            content: data.content,
-            userId: data.userId,
-            userName: data.userName,
-            type: MessageType.TEXT,
-            timestamp: data.timestamp,
-            status: MessageStatus.SENT,
-          },
-        ]);
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+        setLatestMessageByChatId((prev) => ({ ...prev, [chatId]: newMessage }));
       }
     };
 

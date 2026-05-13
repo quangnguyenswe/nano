@@ -1,4 +1,4 @@
-import { createStore, get, set, del } from "idb-keyval";
+import { createStore, get, set, del, keys } from "idb-keyval";
 
 import type { ChatMessage } from "@/types/message";
 
@@ -19,6 +19,12 @@ export interface MessagePersistenceAdapter {
    * Clear messages from storage.
    */
   clearMessages: (chatRoomId: string) => Promise<void>;
+
+  /**
+   * Get the latest message from all chat rooms. This is used to show a preview of the last message in the chat history sidebar.
+   * The implementation can choose how to store and retrieve this information efficiently.
+   */
+  getLatestMessage: () => Promise<Record<string, ChatMessage | null>>;
 }
 
 // storage name gonna be "nano_idb_messages" + chatRoomId
@@ -67,6 +73,26 @@ export class IndexedDBAdapter {
     } catch (error) {
       console.warn("Failed to clear messages from IndexedDB:", error);
       throw error;
+    }
+  }
+
+  static async getLatestMessage(): Promise<Record<string, ChatMessage | null>> {
+    try {
+      const allKeys = await keys(IndexedDBAdapter.store);
+      const latestMessages: Record<string, ChatMessage | null> = {};
+      for (const key of allKeys) {
+        const messages = await get<ChatMessage[]>(key, IndexedDBAdapter.store);
+        const keyString = String(key);
+        if (messages && messages.length > 0) {
+          latestMessages[keyString] = messages[messages.length - 1];
+        } else {
+          latestMessages[keyString] = null;
+        }
+      }
+      return latestMessages;
+    } catch (error) {
+      console.warn("Failed to get latest messages from IndexedDB:", error);
+      return {};
     }
   }
 }

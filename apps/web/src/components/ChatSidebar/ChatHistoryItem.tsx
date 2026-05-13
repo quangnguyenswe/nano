@@ -12,7 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../ui/sidebar";
-import { ChatRoomMetadata } from "@/types/message";
+import type { ChatMessage, ChatRoomMetadata } from "@/types/message";
 import { Link } from "@tanstack/react-router";
 import { LogOut, MoreHorizontal, Share, Trash } from "lucide-react";
 import { cn } from "@/lib/classname";
@@ -21,6 +21,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { formatLastMessage } from "@/lib/date";
 import { setLatestChatRoom } from "@/data/localStorage";
+import { useAtom } from "@/store/jotai/message-jotai";
+import { latestMessageByChatIdAtom } from "@/hooks/use-message-storage";
 
 const PureChatHistoryItem = ({
   chat,
@@ -39,6 +41,7 @@ const PureChatHistoryItem = ({
   //   chatId: chat.id,
   //   initialVisibilityType: chat.visibility,
   // });
+  const [latestMessageByChatId] = useAtom(latestMessageByChatIdAtom);
 
   return (
     <div className="group/item relative hover:bg-muted/30 ">
@@ -75,7 +78,7 @@ const PureChatHistoryItem = ({
             </div>
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground truncate text-start text-xs">
-                This is a placeholder for the last message preview.
+                {latestMessageByChatId[chat.id]?.content || null}
               </span>
             </div>
           </div>

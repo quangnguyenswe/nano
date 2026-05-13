@@ -123,7 +123,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       window.removeEventListener(WINDOW_EVENTS.CHAT_CREATED, handler);
   }, [mutate]);
 
-  const { clearMessages } = useMessageStorage({
+  const { clearMessages, latestMessageByChatId } = useMessageStorage({
     messagePersistenceAdapter: IndexedDBAdapter,
     chatId: id!,
   });

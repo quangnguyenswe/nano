@@ -33,11 +33,11 @@ export default function Chat(props: ChatProps) {
   const { id } = props;
   const [input, setInput] = useState("");
   const [messages, setMessages] = useAtom(savedMessagesAtom);
-  const { isLoading } = useMessageStorage({
+  const { isLoading, getLatestMessage } = useMessageStorage({
     messagePersistenceAdapter: IndexedDBAdapter,
     chatId: id,
   });
-  const [memberShip, setMembership] = useState<string>("guest");
+  const [membership, setMembership] = useState<string>("guest");
   const navigate = useNavigate();
   const { setRole } = useMembershipStore();
   // const { socket, onChatRoomDetailsUpdate, emitChatRoomDetails } = useSocket();
@@ -110,16 +110,21 @@ export default function Chat(props: ChatProps) {
     getMembershipStatus();
   }, [id]);
 
+  useEffect(() => {
+    if (isLoading) return;
+    getLatestMessage();
+  }, [getLatestMessage]);
+
   return (
     <>
-      {memberShip === "joined" ? (
+      {membership === "joined" ? (
         <Messages
           chatId={id}
           messages={messages}
           setMessages={setMessages}
           isLoading={isLoading}
         />
-      ) : memberShip === "none" ? (
+      ) : membership === "none" ? (
         <div className="relative flex-1 flex items-center justify-center">
           <Empty>
             <EmptyHeader>
@@ -175,7 +180,7 @@ export default function Chat(props: ChatProps) {
           input={input}
           setInput={setInput}
           messages={messages}
-          disabled={memberShip !== "joined"}
+          disabled={membership !== "joined"}
           setMessages={setMessages}
           chatId={id}
         />
