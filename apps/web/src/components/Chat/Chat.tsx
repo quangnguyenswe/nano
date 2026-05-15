@@ -33,7 +33,7 @@ export default function Chat(props: ChatProps) {
   const { id } = props;
   const [input, setInput] = useState("");
   const [messages, setMessages] = useAtom(savedMessagesAtom);
-  const { isLoading, getLatestMessage } = useMessageStorage({
+  const { isLoading } = useMessageStorage({
     messagePersistenceAdapter: IndexedDBAdapter,
     chatId: id,
   });
@@ -109,11 +109,6 @@ export default function Chat(props: ChatProps) {
   useEffect(() => {
     getMembershipStatus();
   }, [id]);
-
-  useEffect(() => {
-    if (isLoading) return;
-    getLatestMessage();
-  }, [getLatestMessage]);
 
   return (
     <>

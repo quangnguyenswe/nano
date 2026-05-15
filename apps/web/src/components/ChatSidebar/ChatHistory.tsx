@@ -123,7 +123,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       window.removeEventListener(WINDOW_EVENTS.CHAT_CREATED, handler);
   }, [mutate]);
 
-  const { clearMessages, latestMessageByChatId } = useMessageStorage({
+  const { clearMessages, getLatestMessage } = useMessageStorage({
     messagePersistenceAdapter: IndexedDBAdapter,
     chatId: id!,
   });
@@ -198,6 +198,10 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       }));
     });
   };
+
+  useEffect(() => {
+    getLatestMessage();
+  }, []);
 
   if (!user) {
     return (
