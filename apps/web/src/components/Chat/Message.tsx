@@ -1,5 +1,5 @@
 import equal from "fast-deep-equal";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 // import { cn, sanitizeText } from "@/lib/utils";
 import { Response } from "../Elements/response";
 // import { MessageEditor } from "./message-editor";
@@ -8,8 +8,10 @@ import { cn } from "@/lib/classname";
 import { MessageContent } from "../Elements/message";
 import { Sparkle } from "lucide-react";
 import dayjs from "dayjs";
-import { ChatMessage } from "@/types/message";
+import { ChatMessage, MessageType } from "@/types/message";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { loadChatAttachment } from "@/data/chatAttachments";
+import type { BinaryFileData, FileId } from "@/types/file";
 
 interface PreviewMessageProps {
   chatId: string;
@@ -35,6 +37,65 @@ const BasePreviewMessage = (props: PreviewMessageProps) => {
     showName,
   } = props;
   const [mode, setMode] = useState<"view" | "edit">("view");
+  const attachmentId = message.attachment?.id || message.fileId;
+  const [resolvedAttachment, setResolvedAttachment] = useState<Pick<
+    BinaryFileData,
+    "dataURL" | "id" | "mimeType"
+  > | null>(
+    message.attachment?.dataURL
+      ? {
+          id: message.attachment.id as FileId,
+          dataURL: message.attachment.dataURL as BinaryFileData["dataURL"],
+          mimeType: message.attachment.mediaType as BinaryFileData["mimeType"],
+        }
+      : null,
+  );
+
+  useEffect(() => {
+    if (message.attachment?.dataURL) {
+      setResolvedAttachment({
+        id: message.attachment.id as FileId,
+        dataURL: message.attachment.dataURL as BinaryFileData["dataURL"],
+        mimeType: message.attachment.mediaType as BinaryFileData["mimeType"],
+      });
+      return;
+    }
+
+    if (!attachmentId) {
+      setResolvedAttachment(null);
+      return;
+    }
+
+    let isActive = true;
+
+    void loadChatAttachment(attachmentId).then((file) => {
+      if (!isActive) {
+        return;
+      }
+
+      setResolvedAttachment(
+        file
+          ? {
+              id: file.id,
+              dataURL: file.dataURL,
+              mimeType: file.mimeType,
+            }
+          : null,
+      );
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, [
+    attachmentId,
+    message.attachment?.dataURL,
+    message.attachment?.id,
+    message.attachment?.mediaType,
+  ]);
+
+  const hasAttachment = !!attachmentId;
+  const hasText = message.content.trim().length > 0;
 
   // const attachmentsFromMessage = message.parts.filter(
   //   (part: any) => part.type === "file",
@@ -55,7 +116,7 @@ const BasePreviewMessage = (props: PreviewMessageProps) => {
           </div>
         )}
         <div
-          className={cn("flex w-full items-center gap-2 md:gap-3", {
+          className={cn("flex w-full items-end gap-2 md:gap-3", {
             "justify-end": mine,
             "justify-start": !mine,
           })}
@@ -82,35 +143,46 @@ const BasePreviewMessage = (props: PreviewMessageProps) => {
                 mode !== "edit",
             })}
           >
-            {/* {attachmentsFromMessage.length > 0 && (
-            <div
-              className="flex flex-row justify-end gap-2"
-              data-testid={"message-attachments"}
-            >
-              {attachmentsFromMessage.map((attachment) => (
-                <PreviewAttachment
-                  attachment={{
-                    name: attachment.filename ?? "file",
-                    contentType: attachment.mediaType,
-                    url: attachment.url,
-                  }}
-                  key={attachment.url}
-                />
-              ))}
-            </div>
-          )} */}
-
-            <div>
-              <MessageContent
-                className={cn("px-3 py-1.5 wrap-break-word w-fit rounded-lg", {
-                  "bg-brand text-right text-white": mine,
-                  "bg-muted dark:bg-muted-foreground text-left": !mine,
+            {hasAttachment && (
+              <div
+                className={cn("overflow-hidden rounded-lg border", {
+                  "ml-auto": mine,
+                  "mr-auto": !mine,
                 })}
-                data-testid="message-content"
+                data-testid="message-attachment"
               >
-                <Response>{message.content}</Response>
-              </MessageContent>
-            </div>
+                {resolvedAttachment?.mimeType?.startsWith("image/") &&
+                resolvedAttachment.dataURL ? (
+                  /* biome-ignore lint/performance/noImgElement: user generated attachment preview */
+                  <img
+                    alt={message.attachment?.filename || "attachment"}
+                    className="max-h-80 max-w-full object-contain"
+                    src={resolvedAttachment.dataURL}
+                  />
+                ) : (
+                  <div className="flex min-h-24 min-w-40 items-center justify-center bg-muted px-4 py-3 text-muted-foreground text-sm">
+                    {message.attachment?.filename || "Attachment unavailable"}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {hasText && (
+              <div>
+                <MessageContent
+                  className={cn(
+                    "px-3 py-1.5 wrap-break-word w-fit rounded-lg",
+                    {
+                      "bg-brand text-right text-white": mine,
+                      "bg-muted dark:bg-muted-foreground text-left": !mine,
+                    },
+                  )}
+                  data-testid="message-content"
+                >
+                  <Response>{message.content}</Response>
+                </MessageContent>
+              </div>
+            )}
 
             {/* {message.content?.map((part: any, index: number) => {
             const { type } = part;

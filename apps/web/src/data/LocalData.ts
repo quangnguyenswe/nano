@@ -1,11 +1,4 @@
-import {
-  createStore,
-  entries,
-  del,
-  getMany,
-  set,
-  setMany,
-} from "idb-keyval";
+import { createStore, entries, del, getMany, set, setMany } from "idb-keyval";
 import { FileManager } from "./FileManager";
 import { BinaryFileData, BinaryFiles, FileId } from "@/types/file";
 import { atom } from "@/store/jotai/app-jotai";
@@ -73,6 +66,24 @@ export class LocalData {
 
   static isSavePaused = () => {
     return document.hidden || this.locker.isLocked();
+  };
+
+  static deleteFiles = async (fileIds: FileId[]) => {
+    if (!fileIds.length) {
+      return;
+    }
+
+    updateBrowserStateVersion(STORAGE_KEYS.VERSION_FILES);
+
+    await Promise.all(
+      fileIds.map(async (id) => {
+        try {
+          await del(id, filesStore);
+        } catch (error) {
+          console.warn(`Failed to delete file ${id} from IndexedDB:`, error);
+        }
+      }),
+    );
   };
 
   static fileStorage = new LocalFileManager({

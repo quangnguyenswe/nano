@@ -3,6 +3,7 @@ import type { AuthenticatedSocket } from "../middleware/auth";
 import type { RoomManager } from "../rooms/manager";
 import type { HandlerDependencies } from "./chat";
 
+// TODO: There is a small bug when user send an image and other users receive 2 images
 export function setupMessageHandlers(
   socket: AuthenticatedSocket,
   deps: HandlerDependencies | RoomManager,
@@ -23,7 +24,7 @@ export function setupMessageHandlers(
       return;
     }
 
-    const { messageId, content, timestamp } = data;
+    const { messageId, content, timestamp, attachment } = data;
     const room = roomManager.getChatRoom(chatId);
     logger.info(
       `Socket ${socket.id} sending message to chat ${chatId}: ${content}`,
@@ -50,6 +51,7 @@ export function setupMessageHandlers(
         userName: session.userName,
         content,
         timestamp,
+        attachment,
       });
     } catch (error: any) {
       logger.error(

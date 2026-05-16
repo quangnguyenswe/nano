@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,6 +43,15 @@ const PureChatHistoryItem = ({
   // });
   const [latestMessageByChatId] = useAtom(latestMessageByChatIdAtom);
 
+  const latestMessage = useMemo(() => {
+    const message = latestMessageByChatId[chat.id];
+    if (message?.content && message.type === "text") {
+      return message?.content;
+    } else if (message?.type === "image") {
+      return "[Image]";
+    }
+    return "";
+  }, [latestMessageByChatId, chat.id]);
   return (
     <div className="group/item relative hover:bg-muted/30 ">
       <Link
@@ -78,7 +87,7 @@ const PureChatHistoryItem = ({
             </div>
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground truncate text-start text-xs">
-                {latestMessageByChatId[chat.id]?.content || null}
+                {latestMessage}
               </span>
             </div>
           </div>

@@ -13,17 +13,30 @@ export enum MessageType {
   VIDEO = "video",
 }
 
+const ChatMessageAttachmentSchema = z.object({
+  id: z.string(),
+  mediaType: z.string(),
+  filename: z.string().optional(),
+  dataURL: z.string().optional(),
+});
+
+export type ChatMessageAttachment = z.infer<typeof ChatMessageAttachmentSchema>;
+
+export type ChatMessagePayload = {
+  messageId: string;
+  content: string;
+  timestamp: number;
+  attachment?: ChatMessageAttachment;
+};
+
 const MemberSchema = z.object({
   name: z.string(),
   avatar: z.string().optional(),
-})
+});
 
 export type Member = z.infer<typeof MemberSchema>;
 
-const ChatMemberSchema = z.record(
-  z.string(),
-  MemberSchema,
-)
+const ChatMemberSchema = z.record(z.string(), MemberSchema);
 
 const ChatRoomMetadataSchema = z.object({
   id: z.string(),
@@ -33,7 +46,7 @@ const ChatRoomMetadataSchema = z.object({
   members: ChatMemberSchema.optional(),
   lastUpdated: z.number(),
   unreadCount: z.number().optional(),
-})
+});
 
 export type ChatRoomMetadata = z.infer<typeof ChatRoomMetadataSchema>;
 
@@ -44,6 +57,7 @@ const ChatMessageSchema = z.object({
   content: z.string(),
   type: z.enum(MessageType),
   fileId: z.string().optional(),
+  attachment: ChatMessageAttachmentSchema.optional(),
   timestamp: z.number(),
   status: z.enum(MessageStatus),
 });
@@ -53,7 +67,7 @@ export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 export const LocalStorageChatRoomSchema = z.record(
   z.string(),
   ChatRoomMetadataSchema.omit({ id: true }),
-)
+);
 
 export type LocalStorageChatRooms = z.infer<typeof LocalStorageChatRoomSchema>;
 

@@ -7,12 +7,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { useChatInputAttachments } from "../Elements/chat-input";
 
 type ChatInputUtilsProps = {
   disabled?: boolean;
 };
 export default function ChatInputUtils(props: ChatInputUtilsProps) {
   const { disabled } = props;
+  const attachments = useChatInputAttachments();
+
+  const openImagePicker = () => {
+    attachments.openFileDialog();
+  };
+
   return (
     <div className="m-1 flex items-center gap-1">
       <DropdownMenu>
@@ -28,12 +35,11 @@ export default function ChatInputUtils(props: ChatInputUtilsProps) {
             <Plus className="w-5! h-5! text-muted-foreground hover:text-foreground" />
           </Button>
         </DropdownMenuTrigger>
-        {/* Dropdown menu content goes here */}
         <DropdownMenuContent align="start">
-          <DropdownMenuItem>
+          <DropdownMenuItem onSelect={openImagePicker}>
             <Paperclip className="w-4 h-4 mr-2" /> Attach a File
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onSelect={openImagePicker}>
             <ImageIcon className="w-4 h-4 mr-2" /> Upload Image
           </DropdownMenuItem>
         </DropdownMenuContent>

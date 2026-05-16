@@ -15,6 +15,7 @@ import {
   useState,
 } from "react";
 import { io, type Socket } from "socket.io-client";
+import type { ChatMessagePayload } from "@/types/message";
 
 const logger = createLogger("SocketProvider");
 
@@ -25,7 +26,7 @@ interface SocketContextType {
   currentChatflowId: string | null;
   joinChat: (chatId: string) => void;
   leaveChat: (chatId: string) => void;
-  emitMessage: (chatId: string, content: string, messageId: string) => void;
+  emitMessage: (chatId: string, message: ChatMessagePayload) => void;
   emitChatRoomDetails: (id: string) => void;
 
   onMessageUpdate: (handler: (data: any) => void) => void;
@@ -363,12 +364,11 @@ export function SocketProvider({
   }, [socket, currentChatflowId]);
 
   const emitMessage = useCallback(
-    (chatId: string, content: string, messageId: string) => {
+    (chatId: string, message: ChatMessagePayload) => {
       if (socket && currentChatflowId) {
         socket.emit("send-message", {
-          messageId,
-          content,
-          timestamp: Date.now(),
+          chatId,
+          ...message,
         });
       } else {
         logger.warn(
@@ -376,7 +376,7 @@ export function SocketProvider({
           {
             hasSocket: !!socket,
             currentChatflowId,
-            messageId,
+            messageId: message.messageId,
             chatId,
           },
         );

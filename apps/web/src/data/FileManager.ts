@@ -68,19 +68,24 @@ export class FileManager {
   saveFiles = async ({ files }: { files: BinaryFiles }) => {
     const addedFiles: Map<FileId, BinaryFileData> = new Map();
 
-    // for (const element of elements) {
-    //   const fileData =
-    //     isInitializedImageElement(element) && files[element.fileId];
+    for (const [fileId, fileData] of Object.entries(files) as [
+      FileId,
+      BinaryFileData,
+    ][]) {
+      if (this.isFileSavedOrBeingSaved(fileData)) {
+        continue;
+      }
 
-    //   if (
-    //     fileData &&
-    //     // NOTE if errored during save, won't retry due to this check
-    //     !this.isFileSavedOrBeingSaved(fileData)
-    //   ) {
-    //     addedFiles.set(element.fileId, files[element.fileId]);
-    //     this.savingFiles.set(element.fileId, this.getFileVersion(fileData));
-    //   }
-    // }
+      addedFiles.set(fileId, fileData);
+      this.savingFiles.set(fileId, this.getFileVersion(fileData));
+    }
+
+    if (!addedFiles.size) {
+      return {
+        savedFiles: new Map(),
+        erroredFiles: new Map(),
+      };
+    }
 
     try {
       const { savedFiles, erroredFiles } = await this._saveFiles({

@@ -1,11 +1,4 @@
-import {
-  CornerDownLeftIcon,
-  ImageIcon,
-  MicIcon,
-  PaperclipIcon,
-  PlusIcon,
-  XIcon,
-} from "lucide-react";
+import { MicIcon, PaperclipIcon, XIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import {
   type ChangeEvent,
@@ -401,7 +394,7 @@ export function ChatInputAttachments({
 
 export type ChatInputMessage = {
   text: string;
-  files: FileUIPart[];
+  files: (FileUIPart & { id: string })[];
 };
 
 export type ChatInputProps = Omit<
@@ -713,14 +706,18 @@ export const ChatInput = ({
           const dataUrl = await convertBlobUrlToDataUrl(item.url);
           // If conversion failed, keep the original blob URL
           return {
+            id,
             ...item,
             url: dataUrl ?? item.url,
           };
         }
-        return item;
+        return {
+          id,
+          ...item,
+        };
       }),
     )
-      .then((convertedFiles: FileUIPart[]) => {
+      .then((convertedFiles: (FileUIPart & { id: string })[]) => {
         try {
           const result = onSubmit({ text, files: convertedFiles }, event);
 
@@ -956,7 +953,6 @@ export const ChatInputButton = ({
     />
   );
 };
-
 
 interface SpeechRecognition extends EventTarget {
   continuous: boolean;

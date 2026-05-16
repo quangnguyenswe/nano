@@ -3,6 +3,7 @@ import { createStore, get, set, del, keys } from "idb-keyval";
 import type { ChatMessage } from "@/types/message";
 
 import { STORAGE_KEYS } from "@/constants";
+import { deleteChatAttachments } from "./chatAttachments";
 
 export interface MessagePersistenceAdapter {
   /**
@@ -26,6 +27,32 @@ export interface MessagePersistenceAdapter {
    */
   getLatestMessage: () => Promise<Record<string, ChatMessage | null>>;
 }
+
+const stripAttachmentDataURL = (message: ChatMessage): ChatMessage => {
+  if (!message.attachment?.dataURL) {
+    return message;
+  }
+
+  const { dataURL: _dataURL, ...attachment } = message.attachment;
+
+  return {
+    ...message,
+    attachment,
+  };
+};
+
+const getMessageAttachmentIds = (messages: ChatMessage[]) => {
+  const attachmentIds = new Set<string>();
+
+  for (const message of messages) {
+    const attachmentId = message.attachment?.id || message.fileId;
+    if (attachmentId) {
+      attachmentIds.add(attachmentId);
+    }
+  }
+
+  return [...attachmentIds];
+};
 
 // storage name gonna be "nano_idb_messages" + chatRoomId
 export class IndexedDBAdapter {
@@ -60,7 +87,8 @@ export class IndexedDBAdapter {
     messages: ChatMessage[],
   ): Promise<void> {
     try {
-      await set(chatRoomId, messages, IndexedDBAdapter.store);
+      const storedMessages = messages.map(stripAttachmentDataURL);
+      await set(chatRoomId, storedMessages, IndexedDBAdapter.store);
     } catch (error) {
       console.warn("Failed to save messages to IndexedDB:", error);
       throw error;
@@ -69,7 +97,9 @@ export class IndexedDBAdapter {
 
   static async clearMessages(chatRoomId: string): Promise<void> {
     try {
+      const messages = await this.loadMessages(chatRoomId);
       await del(chatRoomId, IndexedDBAdapter.store);
+      await deleteChatAttachments(getMessageAttachmentIds(messages));
     } catch (error) {
       console.warn("Failed to clear messages from IndexedDB:", error);
       throw error;

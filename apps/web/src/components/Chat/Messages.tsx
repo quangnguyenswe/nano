@@ -10,6 +10,7 @@ import { nanoid } from "nanoid";
 import { type ChatMessage, MessageStatus, MessageType } from "@/types/message";
 import { useAtom } from "@/store/jotai/message-jotai";
 import { latestMessageByChatIdAtom } from "@/hooks/use-message-storage";
+import { saveChatAttachment } from "@/data/chatAttachments";
 
 interface MessagesProps {
   chatId: string;
@@ -34,13 +35,29 @@ export default function BaseMessages(props: MessagesProps) {
   // Handle incoming messages from other users
   useEffect(() => {
     const handleNewMessage = (data: any) => {
-      // TODO: Save message to IndexedDB for offline support
+      const attachment = data.attachment
+        ? {
+            id: data.attachment.id,
+            mediaType: data.attachment.mediaType,
+            filename: data.attachment.filename,
+            dataURL: data.attachment.dataURL,
+          }
+        : undefined;
+
+      if (attachment?.dataURL) {
+        void saveChatAttachment(attachment).catch((error) => {
+          console.warn("Failed to save received attachment:", error);
+        });
+      }
+
       const newMessage: ChatMessage = {
         id: data.messageId || nanoid(),
         content: data.content,
         userId: data.userId,
         userName: data.userName,
-        type: MessageType.TEXT,
+        type: attachment ? MessageType.IMAGE : MessageType.TEXT,
+        fileId: attachment?.id,
+        attachment,
         timestamp: data.timestamp,
         status: MessageStatus.SENT,
       };
