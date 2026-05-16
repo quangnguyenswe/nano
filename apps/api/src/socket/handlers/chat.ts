@@ -44,6 +44,18 @@ export function setupChatHandlers(
         });
         return;
       }
+
+      // Reject undefined chatIds to prevent orphaned connections
+      if (!chatId) {
+        logger.warn(
+          `Join chat request received with undefined chatId from user ${userId}`,
+        );
+        socket.emit("join_chat_error", {
+          error: "Chat ID is required",
+        });
+        return;
+      }
+
       logger.info(
         `Join chat request from ${userId} (${userName}) for chat ${chatId}`,
       );
@@ -55,6 +67,17 @@ export function setupChatHandlers(
       }
 
       socket.join(chatId);
+
+      // Ensure we map this socket to the chatroom early to avoid races
+      // (disconnect/leave may be emitted before async work completes).
+      roomManager.setChatroomForSocket(socket.id, chatId);
+      // Create a lightweight initial session so leave/disconnect handlers
+      // can find the session even if avatar lookup below is still pending.
+      roomManager.setUserSession(socket.id, {
+        userId,
+        userName,
+        avatarUrl: socket.userImage || null,
+      });
 
       if (!roomManager.hasChatRoom(chatId)) {
         roomManager.setChatRoom(chatId, roomManager.createChatRoom(chatId));
@@ -91,8 +114,8 @@ export function setupChatHandlers(
         avatarUrl,
       };
 
+      // Update presence and session (avatar may have been resolved above)
       room.users.set(socket.id, userPresence);
-      roomManager.setChatroomForSocket(socket.id, chatId);
       roomManager.setUserSession(socket.id, {
         userId,
         userName,
@@ -138,9 +161,21 @@ export function setupChatHandlers(
   socket.on("leave-chat", () => {
     const chatId = roomManager.getChatroomIdForSocket(socket.id);
     const session = roomManager.getUserSession(socket.id);
-
+    logger.info(
+      `Leave chat request from socket ${socket.id} (user ${session?.userId}) for chat ${chatId}`,
+    );
     if (chatId && session) {
       socket.leave(chatId);
+
+      // Notify other users in the room before cleanup
+      const uniqueUserCount = roomManager.getUniqueUserCount(chatId);
+      socket.to(chatId).emit("user-left", {
+        userId: session.userId,
+        userName: session.userName,
+        remainingUsers: uniqueUserCount - 1,
+        timestamp: Date.now(),
+      });
+
       roomManager.cleanupUserFromRoom(socket.id, chatId);
       logger.info(
         `User ${session.userId} (${session.userName}) left chat ${chatId}`,

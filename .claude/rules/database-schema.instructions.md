@@ -253,7 +253,7 @@ createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 After schema changes:
 
 ```bash
-pnpm --filter @kaneo/api db:generate
+pnpm --filter @nano/api db:generate
 ```
 
 This creates migration files in `apps/api/drizzle/`.

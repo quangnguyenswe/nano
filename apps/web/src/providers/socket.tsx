@@ -236,6 +236,17 @@ export function SocketProvider({
           details: chatDetails,
         });
       });
+
+      socketInstance.on("user-left", (data) => {
+        logger.info("User left the room:", {
+          userId: data.userId,
+          userName: data.userName,
+          remainingUsers: data.remainingUsers,
+        });
+        // Trigger handler if subscribed (e.g., for UI updates)
+        eventHandlers.current.messageUpdate?.({ type: "user-left", ...data });
+      });
+
       setSocket(socketInstance);
 
       return () => {
@@ -293,7 +304,7 @@ export function SocketProvider({
     // Join the new workflow room
     logger.info(`Joining workflow room: ${urlChatflowId}`);
     socket.emit("join-chat", {
-      chatflowId: urlChatflowId,
+      chatId: urlChatflowId,
     });
     setCurrentChatflowId(urlChatflowId);
   }, [socket, isConnected, urlChatflowId, currentChatflowId]);
