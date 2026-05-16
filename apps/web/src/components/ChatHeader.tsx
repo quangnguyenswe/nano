@@ -5,6 +5,7 @@ import { Bell } from "lucide-react";
 import { cn } from "@/lib/classname";
 import AddMemberButton from "./membership/AddMemberButton";
 import { useMembershipRole } from "@/store/membership";
+import UserPresences from "./UserPresences";
 
 type BaseChatHeaderProps = {
   chatId: string;
@@ -20,6 +21,7 @@ function BaseChatHeader(props: BaseChatHeaderProps) {
 
       {/* Right Header */}
       <div className="ml-auto flex items-center gap-2 lg:mr-4">
+        <UserPresences />
         {role === "admin" || role === "owner" ? (
           <AddMemberButton chatId={chatId} />
         ) : null}
